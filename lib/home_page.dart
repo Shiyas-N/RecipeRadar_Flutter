@@ -66,15 +66,15 @@ class _HomePageState extends State<HomePage> {
   Widget _buildPage(int index) {
     switch (index) {
       case 0:
-        return HomePageContent(); // Return the widget for the Home page content
+        return HomePageContent();
       case 1:
-        return SearchPageContent(); // Return the widget for the Search page content
+        return SearchPageContent();
       case 2:
-        return RefrigeratorPageContent(); // Return the widget for the Refrigerator page content
+        return RefrigeratorPageContent();
       case 3:
-        return ShoppingCartPageContent(); // Return the widget for the Shopping Cart page content
+        return ShoppingCartPageContent();
       case 4:
-        return ProfilePageContent(); // Return the widget for the Profile page content
+        return ProfilePageContent();
       default:
         return Container();
     }
