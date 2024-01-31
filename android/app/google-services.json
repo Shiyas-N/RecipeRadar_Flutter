@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1095777374248",
+    "project_id": "reciperadar-e3526",
+    "storage_bucket": "reciperadar-e3526.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1095777374248:android:a4b1c7d4e84a733b2c651d",
+        "android_client_info": {
+          "package_name": "com.example.recipe_radar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlY8Ca9UkAKfCucVP8hjebzYJnPKfJ46A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

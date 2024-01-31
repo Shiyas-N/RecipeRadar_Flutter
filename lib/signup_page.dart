@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'signup_page.dart';
-import 'home_page.dart';
 
-class LoginPage extends StatelessWidget {
+class SignupPage extends StatelessWidget {
+  const SignupPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +28,18 @@ class LoginPage extends StatelessWidget {
                   padding: EdgeInsets.all(20.0),
                   child: TextField(
                     decoration: InputDecoration(
-                      hintText: 'Enter your email',
+                      hintText: 'Name',
+                      labelText: 'Email',
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.7),
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.all(20.0),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Email',
                       labelText: 'Email',
                       filled: true,
                       fillColor: Colors.white.withOpacity(0.7),
@@ -65,31 +76,12 @@ class LoginPage extends StatelessWidget {
                 // Sign Up text button
                 TextButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => (SignupPage())),
-                    );
+                    // Implement navigation to signup page
                   },
                   style: TextButton.styleFrom(
                     primary: Color(0xFF5DB075), // #5DB075
                   ),
                   child: Text("Don't have an account? Sign up"),
-                ),
-                // Continue as Guest text button
-                TextButton(
-                  onPressed: () {
-                    // Navigate to home page
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              HomePage()), // Replace with the actual route to your home page
-                    );
-                  },
-                  style: TextButton.styleFrom(
-                    primary: Color(0xFF5DB075),
-                  ),
-                  child: Text("Continue as Guest"),
                 ),
                 Padding(
                   padding: EdgeInsets.only(bottom: 40.0),
