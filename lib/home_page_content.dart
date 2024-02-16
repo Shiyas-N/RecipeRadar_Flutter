@@ -1,20 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'recipe_details_page.dart'; // Import the other file
 
-class HomePageContent extends StatelessWidget {
-  // Example list of recipes with image URLs and names
-  final List<Map<String, dynamic>> recipes = [
-    {
-      'name': 'Rajgira Chikki',
-      'image':
-          'https://c.ndtvimg.com/2024-01/u7it9rj_chikki_120x90_05_January_24.jpg', // Replace with actual image URL
-    },
-    {
-      'name': 'Himachali Chicken Curry',
-      'image':
-          'https://c.ndtvimg.com/2023-12/efrl2jm8_chicken-curry_625x300_24_December_23.jpg', // Replace with actual image URL
-    },
-    // Add more recipe entries as needed...
-  ];
+class HomePageContent extends StatefulWidget {
+  @override
+  _HomePageContentState createState() => _HomePageContentState();
+}
+
+class _HomePageContentState extends State<HomePageContent> {
+  List<Map<String, dynamic>> recipes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    final response = await http.get(Uri.parse('http://localhost:8080/api/random-recipes?number=5'));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+
+      setState(() {
+        recipes = List<Map<String, dynamic>>.from(
+          data['recipes'].map((recipe) {
+            return {
+              'id': recipe['id'],
+              'name': recipe['title'],
+              'image': recipe['image'],
+            };
+          }),
+        );
+      });
+    } else {
+      print('Error: ${response.statusCode}');
+      // Handle error
+    }
+  }
+
+  void navigateToRecipeDetails(int recipeId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RecipeDetailsPage(recipeId: recipeId),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,24 +66,23 @@ class HomePageContent extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Container(
-                  height: 200, // Adjust the height as needed
+                  height: 200,
                   decoration: BoxDecoration(
                     image: DecorationImage(
-                      image:
-                          NetworkImage(recipes[index]['image']), // Recipe image
+                      image: NetworkImage(recipes[index]['image']),
                       fit: BoxFit.cover,
                     ),
                   ),
                   child: InkWell(
                     onTap: () {
-                      // Implement navigation to recipe details page
+                      navigateToRecipeDetails(recipes[index]['id']);
                     },
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    recipes[index]['name'], // Recipe name
+                    recipes[index]['name'],
                     style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,

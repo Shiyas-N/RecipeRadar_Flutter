@@ -20,7 +20,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: SplashScreen(), // Display splash screen initially
+      home: SplashScreen(),
+      debugShowCheckedModeBanner: false, // Display splash screen initially
     );
   }
 }
