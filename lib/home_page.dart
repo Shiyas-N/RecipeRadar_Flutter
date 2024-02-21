@@ -4,8 +4,13 @@ import 'search_page_content.dart';
 import 'refrigerator_page_content.dart';
 import 'shopping_cart_page_content.dart';
 import 'profile_page_content.dart';
+import 'recipe.dart'; // Add this line to import the recipe.dart file
 
 class HomePage extends StatefulWidget {
+  final List<Recipe> recipeData; // Add recipeData as a parameter
+
+  HomePage({required this.recipeData}); // Add constructor to receive recipeData
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -22,7 +27,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text('RecipeRadar'),
       ),
-      body: _buildPage(_currentIndex),
+      body: _buildPage(_currentIndex, widget.recipeData),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Color(0xFF4CAF50),
         currentIndex: _currentIndex,
@@ -63,12 +68,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildPage(int index) {
+  Widget _buildPage(int index, List<Recipe> recipeData) {
     switch (index) {
       case 0:
         return HomePageContent();
       case 1:
-        return SearchPageContent();
+        return SearchPageContent(
+          recipeData: [],
+        );
       case 2:
         return RefrigeratorPageContent();
       case 3:

@@ -18,7 +18,8 @@ class _HomePageContentState extends State<HomePageContent> {
   }
 
   Future<void> fetchData() async {
-    final response = await http.get(Uri.parse('http://localhost:8080/api/random-recipes?number=5'));
+    final response =
+        await http.get(Uri.parse('http://localhost:8080/api/five-recipes'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);

@@ -3,10 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'signup_page.dart';
 import 'home_page.dart';
+import 'recipe.dart';
 
 class LoginPage extends StatelessWidget {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final List<Recipe> recipeData; // Add recipeData as a parameter
+
+  LoginPage(
+      {required this.recipeData}); // Add constructor to receive recipeData
 
   Future<void> signInWithEmailAndPassword(
       BuildContext context, String email, String password) async {
@@ -17,6 +22,11 @@ class LoginPage extends StatelessWidget {
       );
 
       // User signed in successfully, you can navigate to the next screen or perform other actions.
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HomePage(recipeData: recipeData)),
+      );
     } catch (e) {
       // Handle sign-in errors
       print(e.toString());
@@ -25,6 +35,31 @@ class LoginPage extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Sign-in failed: ${e.toString()}'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
+  Future<void> signUpWithEmailAndPassword(
+      BuildContext context, String email, String password) async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // User signed up successfully
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HomePage(recipeData: recipeData)),
+      );
+    } catch (e) {
+      print(e.toString());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Sign-up failed: ${e.toString()}'),
           duration: Duration(seconds: 3),
         ),
       );
@@ -126,7 +161,10 @@ class LoginPage extends StatelessWidget {
                         _emailController.text, _passwordController.text);
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
+                      MaterialPageRoute(
+                          builder: (context) => HomePage(
+                                recipeData: recipeData,
+                              )),
                     );
                   },
                   child: Text('Sign In',
@@ -178,8 +216,9 @@ class LoginPage extends StatelessWidget {
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              HomePage()), // Replace with the actual route to your home page
+                          builder: (context) => HomePage(
+                                recipeData: recipeData,
+                              )), // Replace with the actual route to your home page
                     );
                   },
                   style: TextButton.styleFrom(
