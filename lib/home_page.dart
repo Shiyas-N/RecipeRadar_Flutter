@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
         return HomePageContent();
       case 1:
         return SearchPageContent(
-          recipeData: [],
+          // recipeData:recipeData,
         );
       case 2:
         return RefrigeratorPageContent();

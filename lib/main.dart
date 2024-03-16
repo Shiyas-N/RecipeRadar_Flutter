@@ -18,60 +18,29 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Recipe>>(
-      future: loadRecipeData(context),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          List<Recipe> recipeData = snapshot.data!;
-          return MaterialApp(
-            title: 'RecipeRadar',
-            theme: ThemeData(
-              primarySwatch: Colors.green,
-            ),
-            home: SplashScreen(recipeData: recipeData),
-            debugShowCheckedModeBanner: false,
-          );
-        } else {
-          // You can return a loading indicator or other UI while waiting
-          return CircularProgressIndicator();
-        }
-      },
+    return MaterialApp(
+      title: 'RecipeRadar',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+      ),
+      home: SplashScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
 
-Future<List<Recipe>> loadRecipeData(BuildContext context) async {
-  try {
-    String jsonData = await DefaultAssetBundle.of(context)
-        .loadString('assets/allrecipedata.json');
-
-    final Map<String, dynamic> jsonMap = json.decode(jsonData);
-    List<dynamic> recipesJson = jsonMap['recipes'];
-
-    List<Recipe> recipes =
-        recipesJson.map((recipeJson) => Recipe.fromJson(recipeJson)).toList();
-
-    return recipes;
-  } catch (e) {
-    print('Error loading recipe data: $e');
-    return []; // Return an empty list or handle it as needed
-  }
-}
-
 class SplashScreen extends StatefulWidget {
-  final List<Recipe> recipeData;
-
-  SplashScreen({required this.recipeData});
-
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  List<Recipe> recipeData = [];
+
   @override
   void initState() {
     super.initState();
-    final recipeData = widget.recipeData;
+    loadRecipeData();
     Timer(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
@@ -80,6 +49,26 @@ class _SplashScreenState extends State<SplashScreen> {
         ),
       );
     });
+  }
+
+  Future<void> loadRecipeData() async {
+    try {
+      String jsonData = await DefaultAssetBundle.of(context)
+          .loadString('assets/allrecipedata.json');
+
+      final Map<String, dynamic> jsonMap = json.decode(jsonData);
+      List<dynamic> recipesJson = jsonMap['recipes'];
+
+      
+      setState(() {
+        recipeData = recipesJson
+            .map((recipeJson) => Recipe.fromJson(recipeJson))
+            .toList();
+      });
+    } catch (e) {
+      print('Error loading recipe data: $e');
+      // Handle the error as needed
+    }
   }
 
   @override
