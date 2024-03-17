@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'recipe_details_page.dart';
@@ -221,23 +223,110 @@ class RecipeDetailPage extends StatelessWidget {
   }
 }
 
-class IngredientCard extends StatelessWidget {
+class IngredientCard extends StatefulWidget {
   final dynamic ingredient;
 
   IngredientCard({required this.ingredient});
 
   @override
+  _IngredientCardState createState() => _IngredientCardState();
+}
+
+class _IngredientCardState extends State<IngredientCard> {
+  bool _isAddedToCart = false;
+
+  void addToShopping(BuildContext context) {
+    if (!_isAddedToCart) {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String imageName = widget.ingredient['image'].split('/').last;
+        CollectionReference shoppingCollection = FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('shopping');
+
+        shoppingCollection
+            .where('name', isEqualTo: widget.ingredient['name'])
+            .where('quantity', isEqualTo: widget.ingredient['amount'])
+            .get()
+            .then((QuerySnapshot querySnapshot) {
+          if (querySnapshot.size == 0) {
+            shoppingCollection.add({
+              'name': widget.ingredient['name'],
+              'quantity': widget.ingredient['amount'],
+              'timestamp': FieldValue.serverTimestamp(),
+              'image': imageName,
+            });
+            setState(() {
+              _isAddedToCart = true;
+            });
+            // Show the green animation
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Item added to shopping cart.'),
+                duration: Duration(seconds: 2),
+                action: SnackBarAction(
+                  label: 'UNDO',
+                  onPressed: () {
+                    // Implement undo functionality if needed
+                  },
+                ),
+              ),
+            );
+            // Reset the added to cart state after a delay
+            Future.delayed(Duration(seconds: 2), () {
+              setState(() {
+                _isAddedToCart = false;
+              });
+            });
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Item already exists in the shopping cart.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+        }).catchError((error) {
+          print('Error adding to shopping cart: $error');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('An error occurred. Please try again later.'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        leading: Image.network(
-          ingredient['image'],
-          height: 50,
-          width: 50,
-          fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: _isAddedToCart ? null : () => addToShopping(context),
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+        color: _isAddedToCart ? Colors.lightGreen : Colors.white,
+        child: Card(
+          child: ListTile(
+            leading: Image.network(
+              widget.ingredient['image'],
+              height: 50,
+              width: 50,
+              fit: BoxFit.cover,
+            ),
+            title: Text(widget.ingredient['name']),
+            subtitle: Text(
+                '${widget.ingredient['amount']} ${widget.ingredient['unit']}'),
+            trailing: IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: () {
+                addToShopping(context);
+              },
+            ),
+          ),
         ),
-        title: Text(ingredient['name']),
-        subtitle: Text('${ingredient['amount']} ${ingredient['unit']}'),
       ),
     );
   }
