@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'recipe_suggestion_page.dart';
 
 class RefrigeratorPageContent extends StatefulWidget {
   @override
@@ -28,15 +29,34 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
           _auth.currentUser != null
               ? _buildIngredientList(context)
               : _buildNotAuthenticatedView(context),
-          Positioned(
-            bottom: 16.0,
-            right: 16.0,
-            child: FloatingActionButton(
-              onPressed: () {
-                _showAddDialog(context);
-              },
-              child: Icon(Icons.add),
-            ),
+          // Positioned(
+          //   bottom: 16.0,
+          //   right: 16.0,
+          //   child: FloatingActionButton(
+          //     onPressed: () {
+          //       _showAddDialog(context);
+          //     },
+          //     child: Icon(Icons.add),
+          //   ),
+          // ),
+        ],
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              _showAddDialog(context);
+            },
+            child: Icon(Icons.add),
+          ),
+          SizedBox(height: 16),
+          FloatingActionButton(
+            onPressed: () {
+              _getRecipeSuggestions(context);
+            },
+            child: Icon(Icons.food_bank),
           ),
         ],
       ),
@@ -138,6 +158,136 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
 
     // Return the number of days until the due date
     return difference.inDays;
+  }
+
+  Future<void> _getRecipeSuggestions(BuildContext context) async {
+    // Check if the user is authenticated
+    if (_auth.currentUser == null) {
+      // Show a message or navigate to the authentication page
+      return;
+    }
+
+    // Fetch ingredients from Firestore
+    try {
+      final snapshot = await _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .collection('ingredients')
+          .get();
+
+      // Extract ingredient data from snapshot
+      List<Map<String, dynamic>> ingredientsData = snapshot.docs
+          .map((doc) => doc.data() as Map<String, dynamic>)
+          .toList();
+
+      // Check if there are any ingredients available
+      if (ingredientsData.isEmpty) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text('No Ingredients'),
+              content:
+                  Text('Please add ingredients to get recipe suggestions.'),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+        return;
+      }
+
+      // Extract names of available ingredients
+      List<String> availableIngredients = ingredientsData
+          .map((ingredient) => ingredient['name'] as String)
+          .toList();
+
+      // print('Ingredients Data: $ingredientsData');
+      // print('Available Ingredients: $availableIngredients');
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RecipeSuggestionPage(
+            availableIngredients: availableIngredients,
+          ),
+        ),
+      );
+      // Call the recipe API endpoint with availableIngredients
+      // String apiUrl =
+      //     'http://localhost:8080/api/recipe-by-ingredients?ingredients=${availableIngredients.join(',')}';
+
+      // try {
+      //   final response = await http.get(Uri.parse(apiUrl));
+      //   if (response.statusCode == 200) {
+      //     // Parse the response and extract recipe suggestions
+      //     List<dynamic> recipes = json.decode(response.body);
+
+      //     // Display the recipe suggestions to the user
+      //     showDialog(
+      //       context: context,
+      //       builder: (context) {
+      //         return AlertDialog(
+      //           title: Text('Recipe Suggestions'),
+      //           content: Column(
+      //             mainAxisSize: MainAxisSize.min,
+      //             children: [
+      //               for (var recipe in recipes)
+      //                 ListTile(
+      //                   title: Text(recipe['title']),
+      //                   subtitle: Text(
+      //                       'Missing ingredients: ${recipe['missingIngredients']}'),
+      //                   onTap: () {
+      //                     // Handle tapping on a recipe to view details or navigate to a recipe screen
+      //                   },
+      //                 ),
+      //             ],
+      //           ),
+      //           actions: [
+      //             ElevatedButton(
+      //               onPressed: () {
+      //                 Navigator.pop(context);
+      //               },
+      //               child: Text('OK'),
+      //             ),
+      //           ],
+      //         );
+      //       },
+      //     );
+      //   } else {
+      //     throw Exception('Failed to load recipe suggestions');
+      //   }
+      // } catch (e) {
+      //   print('Error fetching recipe suggestions: $e');
+      //   showDialog(
+      //     context: context,
+      //     builder: (context) {
+      //       return AlertDialog(
+      //         title: Text('Error'),
+      //         content: Text(
+      //             'Failed to load recipe suggestions. Please try again later.'),
+      //         actions: [
+      //           ElevatedButton(
+      //             onPressed: () {
+      //               Navigator.pop(context);
+      //             },
+      //             child: Text('OK'),
+      //           ),
+      //         ],
+      //       );
+      //     },
+      //   );
+      // }
+    } catch (e) {
+      print('Error fetching ingredients: $e');
+      // Handle error fetching ingredients
+    }
   }
 
   Widget _buildNotAuthenticatedView(BuildContext context) {

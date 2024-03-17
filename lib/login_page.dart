@@ -210,22 +210,22 @@ class LoginPage extends StatelessWidget {
                   child: Text("Don't have an account? Sign up"),
                 ),
                 // Continue as Guest text button
-                TextButton(
-                  onPressed: () {
-                    // Navigate to home page
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => HomePage(
-                                recipeData: recipeData,
-                              )), // Replace with the actual route to your home page
-                    );
-                  },
-                  style: TextButton.styleFrom(
-                    primary: Color(0xFF5DB075),
-                  ),
-                  child: Text("Continue as Guest"),
-                ),
+                // TextButton(
+                //   onPressed: () {
+                //     // Navigate to home page
+                //     Navigator.pushReplacement(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => HomePage(
+                //                 recipeData: recipeData,
+                //               )), // Replace with the actual route to your home page
+                //     );
+                //   },
+                //   style: TextButton.styleFrom(
+                //     primary: Color(0xFF5DB075),
+                //   ),
+                //   child: Text("Continue as Guest"),
+                // ),
                 Padding(
                   padding: EdgeInsets.only(bottom: 40.0),
                 ),
