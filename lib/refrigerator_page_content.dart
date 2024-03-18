@@ -15,6 +15,7 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
   List<Map<String, dynamic>>? ingredientsData;
   final TextEditingController _ingredientController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
+  final TextEditingController _newQuantityController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -64,57 +65,191 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
   }
 
   Widget _buildIngredientList(BuildContext context) {
-    return StreamBuilder(
-      stream: _firestore
-          .collection('users')
-          .doc(_auth.currentUser?.uid)
-          .collection('ingredients')
-          .snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-
-        List<DocumentSnapshot> ingredients = snapshot.data!.docs;
-
-        return ListView.builder(
-          itemCount: ingredients.length,
-          itemBuilder: (context, index) {
-            Map<String, dynamic>? ingredientData =
-                ingredients[index].data() as Map<String, dynamic>?;
-
-            return Card(
-              child: ListTile(
-                leading: SizedBox(
-                  width: 100,
-                  height: 100,
-                  child: _buildIngredientImage(ingredientData?['image']),
-                ),
-                title: Text(ingredientData?['name'] ?? ''),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Quantity: ${ingredientData?['quantity'] ?? 'N/A'}'),
-                    Text(
-                        'Added on: ${_formatTimestamp(ingredientData?['timestamp'])}'),
-                    Text(
-                        'Days to expire: ${_calculateDaysToExpire(ingredientData?['timestamp'])}'),
-                  ],
-                ),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    _deleteIngredient(ingredients[index].id);
-                  },
-                ),
-              ),
+    return Expanded(
+      child: StreamBuilder(
+        stream: _firestore
+            .collection('users')
+            .doc(_auth.currentUser?.uid)
+            .collection('ingredients')
+            .snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
             );
-          },
+          }
+
+          List<DocumentSnapshot> ingredients = snapshot.data!.docs;
+
+          return ListView.builder(
+            itemCount: ingredients.length,
+            itemBuilder: (context, index) {
+              Map<String, dynamic>? ingredientData =
+                  ingredients[index].data() as Map<String, dynamic>?;
+
+              return Card(
+                child: ListTile(
+                  leading: SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: _buildIngredientImage(ingredientData?['image']),
+                  ),
+                  title: Text(ingredientData?['name'] ?? ''),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          _updateQuantity(context, ingredients[index].id,
+                              ingredientData?['quantity'] ?? 0);
+                        },
+                        child: Container(
+                          padding:
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.blue,
+                          ),
+                          child: Text(
+                            'Quantity: ${ingredientData?['quantity'] ?? 'N/A'}',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Text(
+                          'Added on: ${_formatTimestamp(ingredientData?['timestamp'])}'),
+                      Text(
+                          'Days to expire: ${_calculateDaysToExpire(ingredientData?['timestamp'])}'),
+                    ],
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      _deleteIngredient(ingredients[index].id);
+                    },
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  void _updateQuantity(
+      BuildContext context, String ingredientId, String currentQuantity) {
+    TextEditingController _newQuantityController =
+        TextEditingController(text: currentQuantity);
+    double _quantity = double.tryParse(currentQuantity) ??
+        0.0; // Default to 0.0 if parsing fails
+    String displayQuantity = _quantity.truncateToDouble() == _quantity
+        ? _quantity.toInt().toString()
+        : _quantity.toStringAsFixed(1);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Update Quantity'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: _newQuantityController,
+                    keyboardType:
+                        TextInputType.numberWithOptions(decimal: true),
+                    style: TextStyle(fontSize: 18),
+                    decoration: InputDecoration(
+                      labelText: 'New Quantity',
+                      hintText: 'Enter new quantity',
+                      border: OutlineInputBorder(),
+                      suffixIcon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                if (_quantity > 0)
+                                  _quantity -= 0.1; // Decrease by 0.1
+                                _newQuantityController.text =
+                                    _formatQuantity(_quantity);
+                              });
+                            },
+                            icon: Icon(Icons.remove),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              setState(() {
+                                _quantity += 0.1; // Increase by 0.1
+                                _newQuantityController.text =
+                                    _formatQuantity(_quantity);
+                              });
+                            },
+                            icon: Icon(Icons.add),
+                          ),
+                        ],
+                      ),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        try {
+                          _quantity = double.parse(value);
+                        } catch (e) {
+                          _quantity =
+                              0.0; // Set to default value if parsing fails
+                        }
+                      });
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                String newQuantity = _newQuantityController.text;
+                if (newQuantity.isNotEmpty) {
+                  _updateIngredientQuantity(ingredientId, newQuantity);
+                  Navigator.pop(context); // Close the dialog
+                }
+              },
+              child: Text('Update'),
+            ),
+          ],
         );
       },
     );
+  }
+
+  String _formatQuantity(double quantity) {
+    return quantity.truncateToDouble() == quantity
+        ? quantity.toInt().toString()
+        : quantity.toStringAsFixed(1);
+  }
+
+  void _updateIngredientQuantity(String ingredientId, String newQuantity) {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      _firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('ingredients')
+          .doc(ingredientId)
+          .update({'quantity': newQuantity});
+    }
   }
 
   Widget _buildIngredientImage(String? imageUrl) {
