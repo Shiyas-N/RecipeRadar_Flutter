@@ -1,0 +1,1492 @@
+[
+  {
+    "name": "ale",
+    "image": "ale.png",
+    "category": "Beverage",
+    "default-unit": "L",
+    "all-units": ["L", "mL"],
+    "expiry-days": 7,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 1
+  },
+  {
+    "name": "avocado",
+    "image": "avocado.jpg",
+    "category": "Fruit",
+    "default-unit": "piece",
+    "all-units": ["piece", "g", "kg"],
+    "expiry-days": 5,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 1
+  },
+  {
+    "name": "agar",
+    "image": "white-powder.jpg",
+    "category": "Baking",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 30,
+    "threshold-quantity": 10,
+    "default-shopping-amount": 50
+  },
+  {
+    "name": "alum",
+    "image": "white-powder.jpg",
+    "category": "Miscellaneous",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 30,
+    "threshold-quantity": 5,
+    "default-shopping-amount": 20
+  },
+  {
+    "name": "amla",
+    "image": "sliced-amla.jpg",
+    "category": "Fruit",
+    "default-unit": "piece",
+    "all-units": ["piece", "g", "kg"],
+    "expiry-days": 7,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 5
+  },
+  {
+    "name": "apple",
+    "image": "apple.jpg",
+    "category": "Fruit",
+    "default-unit": "piece",
+    "all-units": ["piece", "g", "kg"],
+    "expiry-days": 14,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 6
+  },
+  {
+    "name": "agave",
+    "image": "agave.png",
+    "category": "Sweetener",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 30,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "aioli",
+    "image": "aioli.jpg",
+    "category": "Condiment",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 7,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "anise",
+    "image": "aniseed-or-anise.jpg",
+    "category": "Spice",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 10,
+    "default-shopping-amount": 25
+  },
+  {
+    "name": "ackee",
+    "image": "ackee.png",
+    "category": "Fruit",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 7,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 3
+  },
+  {
+    "name": "almonds",
+    "image": "almonds.jpg",
+    "category": "Nut",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "asiago cheese",
+    "image": "parmesan.jpg",
+    "category": "Dairy",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 14,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 200
+  },
+  {
+    "name": "ajwain",
+    "image": "ajwain.jpg",
+    "category": "Spice",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 20,
+    "default-shopping-amount": 50
+  },
+  {
+    "name": "amchoor",
+    "image": "amchoor.jpg",
+    "category": "Spice",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "au jus",
+    "image": "gravy.jpg",
+    "category": "Sauce",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 7,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "chokeberries",
+    "image": "chokeberry.jpg",
+    "category": "Fruit",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 7,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "aleppo pepper",
+    "image": "red-pepper-flakes.jpg",
+    "category": "Spice",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 25,
+    "default-shopping-amount": 50
+  },
+  {
+    "name": "arugula",
+    "image": "arugula-or-rocket-salad.jpg",
+    "category": "Vegetable",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 5,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "boquerones",
+    "image": "anchovies.jpg",
+    "category": "Seafood",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 3,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "apricot",
+    "image": "apricot.jpg",
+    "category": "Fruit",
+    "default-unit": "piece",
+    "all-units": ["piece", "g", "kg"],
+    "expiry-days": 5,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 6
+  },
+  {
+    "name": "annatto",
+    "image": "paprika.jpg",
+    "category": "Spice",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 10,
+    "default-shopping-amount": 25
+  },
+  {
+    "name": "alcohol",
+    "image": "rum-dark.jpg",
+    "category": "Beverage",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 365,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "all bran cereal",
+    "image": "all-bran-cereal.jpg",
+    "category": "Cereal",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 90,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "allspice",
+    "image": "allspice-ground.jpg",
+    "category": "Spice",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 25,
+    "default-shopping-amount": 50
+  },
+  {
+    "name": "amaretto liqueur",
+    "image": "temporary-orange-liqueur.jpg",
+    "category": "Alcohol",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 365,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "amaranth",
+    "image": "amaranth.jpg",
+    "category": "Grain",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "ahi tuna",
+    "image": "tuna-steak.png",
+    "category": "Seafood",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 3,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "amaretti cookies",
+    "image": "amaretti.jpg",
+    "category": "Bakery",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 30,
+    "threshold-quantity": 10,
+    "default-shopping-amount": 20
+  },
+  {
+    "name": "allulose",
+    "image": "sugar-substitute.jpg",
+    "category": "Sweetener",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "anellini pasta",
+    "image": "anellini.png",
+    "category": "Pasta",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "anisette",
+    "image": "shot-of-liquor.jpg",
+    "category": "Alcohol",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 365,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "areca nut",
+    "image": "areca-nut.jpg",
+    "category": "Nut",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 30,
+    "threshold-quantity": 5,
+    "default-shopping-amount": 10
+  },
+  {
+    "name": "asparagus",
+    "image": "asparagus.png",
+    "category": "Vegetable",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 3,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "arrowroot",
+    "image": "white-powder.jpg",
+    "category": "Starch",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "asafoetida",
+    "image": "curry-powder.jpg",
+    "category": "Spice",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 25,
+    "default-shopping-amount": 50
+  },
+  {
+    "name": "andouille sausage",
+    "image": "smoked-sausage.jpg",
+    "category": "Meat",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 7,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "artichoke",
+    "image": "artichokes.png",
+    "category": "Vegetable",
+    "default-unit": "piece",
+    "all-units": ["piece", "g", "kg"],
+    "expiry-days": 5,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 2
+  },
+  {
+    "name": "angel hair pasta",
+    "image": "angelhair.jpg",
+    "category": "Pasta",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "aloe vera juice",
+    "image": "aloe-vera-juice.jpg",
+    "category": "Beverage",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 30,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "agnolotti",
+    "image": "agnolotti.jpg",
+    "category": "Pasta",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 7,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "ash gourd",
+    "image": "wax-gourd.png",
+    "category": "Vegetable",
+    "default-unit": "piece",
+    "all-units": ["piece", "g", "kg"],
+    "expiry-days": 14,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 2
+  },
+  {
+    "name": "applesauce",
+    "image": "applesauce.png",
+    "category": "Fruit",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 7,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "eggplant",
+    "image": "eggplant.png",
+    "category": "Vegetable",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 7,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "anjou pear",
+    "image": "anjou-pear.jpg",
+    "category": "Fruit",
+    "default-unit": "piece",
+    "all-units": ["piece", "g", "kg"],
+    "expiry-days": 5,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 2
+  },
+  {
+    "name": "almond oil",
+    "image": "almond-oil.jpg",
+    "category": "Oil",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 365,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "acai juice",
+    "image": "acai-juice.jpg",
+    "category": "Beverage",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 7,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "almond milk",
+    "image": "almond-milk.png",
+    "category": "Dairy Alternative",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 7,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "apple juice",
+    "image": "apple-juice.jpg",
+    "category": "Beverage",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 7,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "apple cider",
+    "image": "apple-cider.jpg",
+    "category": "Beverage",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 7,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "avocado oil",
+    "image": "avocado-oil.jpg",
+    "category": "Oil",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 365,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "almond meal",
+    "image": "almond-meal-or-almond-flour.jpg",
+    "category": "Baking Ingredient",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 180,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "apricot jam",
+    "image": "apricot-jam.jpg",
+    "category": "Condiment",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 180,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "adobo sauce",
+    "image": "harissa.jpg",
+    "category": "Sauce",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 90,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "apple jelly",
+    "image": "apple-jelly.jpg",
+    "category": "Condiment",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 180,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "ancho chili pepper",
+    "image": "dried-arbol-chiles.jpg",
+    "category": "Spice",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 25,
+    "default-shopping-amount": 50
+  },
+  {
+    "name": "almond bark",
+    "image": "baking-chocolate.jpg",
+    "category": "Baking Ingredient",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "andes mints",
+    "image": "mint-chocolate.jpg",
+    "category": "Confectionery",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 180,
+    "threshold-quantity": 10,
+    "default-shopping-amount": 20
+  },
+  {
+    "name": "dried arbol chile",
+    "image": "dried-arbol-chiles.jpg",
+    "category": "Spice",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 25,
+    "default-shopping-amount": 50
+  },
+  {
+    "name": "adzuki beans",
+    "image": "Azuki-beans.jpg",
+    "category": "Legume",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "green olives",
+    "image": "green-olives---sliced.jpg",
+    "category": "Condiment",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 180,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "acai powder",
+    "image": "acai-berry-powder.jpg",
+    "category": "Superfood",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "dry yeast",
+    "image": "yeast-granules.jpg",
+    "category": "Baking Ingredient",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 180,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "risotto rice",
+    "image": "arborio-rice.png",
+    "category": "Grain",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 500,
+    "default-shopping-amount": 1000
+  },
+  {
+    "name": "acorn squash",
+    "image": "acorn-squash.jpg",
+    "category": "Vegetable",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 30,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 2
+  },
+  {
+    "name": "almond paste",
+    "image": "marzipan-or-almond-paste.jpg",
+    "category": "Baking Ingredient",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 180,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "apple butter",
+    "image": "apple-jelly.jpg",
+    "category": "Condiment",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 180,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "enchilado cheese",
+    "image": "camembert.png",
+    "category": "Cheese",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 14,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 200
+  },
+  {
+    "name": "aji amarillo",
+    "image": "aji-amarillo.png",
+    "category": "Pepper",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 10,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 3
+  },
+  {
+    "name": "nut butter",
+    "image": "almond-butter.jpg",
+    "category": "Spread",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 90,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "anchovy paste",
+    "image": "anchovy-paste.png",
+    "category": "Condiment",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 90,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "alfredo sauce",
+    "image": "alfredo-sauce.png",
+    "category": "Sauce",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 30,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "anise extract",
+    "image": "vanilla-extract.jpg",
+    "category": "Extract",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 365,
+    "threshold-quantity": 25,
+    "default-shopping-amount": 50
+  },
+  {
+    "name": "anaheim pepper",
+    "image": "chili-peppers-green.jpg",
+    "category": "Pepper",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 10,
+    "threshold-quantity": 2,
+    "default-shopping-amount": 5
+  },
+  {
+    "name": "annatto seeds",
+    "image": "achiote-seeds.jpg",
+    "category": "Seed",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "sliced almonds",
+    "image": "almonds.jpg",
+    "category": "Nut",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 180,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "pastina",
+    "image": "pastina.jpg",
+    "category": "Pasta",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "apricot nectar",
+    "image": "apricot-nectar-or-apricot-juice.jpg",
+    "category": "Beverage",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 180,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "avocado halves",
+    "image": "avocado.jpg",
+    "category": "Fruit",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 3,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 2
+  },
+  {
+    "name": "avocado leaves",
+    "image": "avocado-leaves.jpg",
+    "category": "Herb",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 7,
+    "threshold-quantity": 5,
+    "default-shopping-amount": 10
+  },
+  {
+    "name": "avocado cubes",
+    "image": "avocado.jpg",
+    "category": "Fruit",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 3,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "almond extract",
+    "image": "extract.png",
+    "category": "Extract",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 365,
+    "threshold-quantity": 25,
+    "default-shopping-amount": 50
+  },
+  {
+    "name": "slivered almonds",
+    "image": "almonds-slivered.png",
+    "category": "Nut",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 180,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "amaranth flour",
+    "image": "brown-flour.jpg",
+    "category": "Flour",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 180,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "ahi tuna steak",
+    "image": "tuna-steak.png",
+    "category": "Seafood",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 2,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 2
+  },
+  {
+    "name": "crocodile meat",
+    "image": "crocodile-meat.jpg",
+    "category": "Meat",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 3,
+    "threshold-quantity": 500,
+    "default-shopping-amount": 1000
+  },
+  {
+    "name": "asian dressing",
+    "image": "asian-toasted-sesame-dressing.png",
+    "category": "Condiment",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 90,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "fish sauce",
+    "image": "asian-fish-sauce.jpg",
+    "category": "Condiment",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 365,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "avocado slices",
+    "image": "avocado-slices.jpg",
+    "category": "Fruit",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 3,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "amchar masala",
+    "image": "ground-cumin.jpg",
+    "category": "Spice Blend",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "long pepper",
+    "image": "long-pepper.jpg",
+    "category": "Spice",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 365,
+    "threshold-quantity": 5,
+    "default-shopping-amount": 10
+  },
+  {
+    "name": "american cheese",
+    "image": "american-cheese.jpg",
+    "category": "Cheese",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 14,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "angel food cake",
+    "image": "angel-food-cake.jpg",
+    "category": "Cake",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 7,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 2
+  },
+  {
+    "name": "apple pie spice",
+    "image": "garam-masala.jpg",
+    "category": "Spice Blend",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "alfalfa sprouts",
+    "image": "alfalfa-sprouts.png",
+    "category": "Sprout",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 5,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "adobo seasoning",
+    "image": "onion-powder.jpg",
+    "category": "Seasoning",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "artichoke hearts",
+    "image": "artichoke-hearts.png",
+    "category": "Vegetable",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 14,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "allspice berries",
+    "image": "allspice-berries.png",
+    "category": "Spice",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "asian vegetables",
+    "image": "asian-medley.png",
+    "category": "Vegetable",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 7,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "wheat flour",
+    "image": "flour.png",
+    "category": "Flour",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 180,
+    "threshold-quantity": 500,
+    "default-shopping-amount": 1000
+  },
+  {
+    "name": "beer",
+    "image": "beer.jpg",
+    "category": "Beverage",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 30,
+    "threshold-quantity": 500,
+    "default-shopping-amount": 1000
+  },
+  {
+    "name": "beef",
+    "image": "beef-cubes-raw.png",
+    "category": "Meat",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 3,
+    "threshold-quantity": 500,
+    "default-shopping-amount": 1000
+  },
+  {
+    "name": "red beet",
+    "image": "beets.jpg",
+    "category": "Vegetable",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 14,
+    "threshold-quantity": 3,
+    "default-shopping-amount": 5
+  },
+  {
+    "name": "brie",
+    "image": "brie.jpg",
+    "category": "Cheese",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 14,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "bran",
+    "image": "bran.jpg",
+    "category": "Grain",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "bratwurst",
+    "image": "bratwurst.jpg",
+    "category": "Meat",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 3,
+    "threshold-quantity": 2,
+    "default-shopping-amount": 5
+  },
+  {
+    "name": "bael fruit",
+    "image": "bael-fruit.jpg",
+    "category": "Fruit",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 7,
+    "threshold-quantity": 2,
+    "default-shopping-amount": 5
+  },
+  {
+    "name": "boar",
+    "image": "beef-cubes-raw.png",
+    "category": "Meat",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 3,
+    "threshold-quantity": 500,
+    "default-shopping-amount": 1000
+  },
+  {
+    "name": "fresh basil",
+    "image": "basil.jpg",
+    "category": "Herb",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 7,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "applewood smoked bacon",
+    "image": "raw-bacon.png",
+    "category": "Meat",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 7,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "bread",
+    "image": "white-bread.jpg",
+    "category": "Grain",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 7,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 2
+  },
+  {
+    "name": "stock",
+    "image": "chicken-broth.png",
+    "category": "Liquid",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 30,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "chickpea flour",
+    "image": "chickpea-flour-or-another-gluten-free-flour.jpg",
+    "category": "Flour",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 180,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "bagel",
+    "image": "bagels.jpg",
+    "category": "Grain",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 7,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 2
+  },
+  {
+    "name": "brine",
+    "image": "no.jpg",
+    "category": "Liquid",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 7,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "berries",
+    "image": "berries-mixed.jpg",
+    "category": "Fruit",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 7,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "bison",
+    "image": "fresh-ground-beef.jpg",
+    "category": "Meat",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 3,
+    "threshold-quantity": 500,
+    "default-shopping-amount": 1000
+  },
+  {
+    "name": "alcohol",
+    "image": "rum-dark.jpg",
+    "category": "Beverage",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 365,
+    "threshold-quantity": 500,
+    "default-shopping-amount": 1000
+  },
+  {
+    "name": "pearl millet",
+    "image": "pearl-millet.jpg",
+    "category": "Grain",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 500,
+    "default-shopping-amount": 1000
+  },
+  {
+    "name": "boule",
+    "image": "french-boule.jpg",
+    "category": "Grain",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 2,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 2
+  },
+  {
+    "name": "butter",
+    "image": "butter-sliced.jpg",
+    "category": "Dairy",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 14,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "banana",
+    "image": "bananas.jpg",
+    "category": "Fruit",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 5,
+    "threshold-quantity": 3,
+    "default-shopping-amount": 5
+  },
+  {
+    "name": "brandy",
+    "image": "brandy.png",
+    "category": "Beverage",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 365,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "bulgur",
+    "image": "bulgur-wheat.jpg",
+    "category": "Grain",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 500,
+    "default-shopping-amount": 1000
+  },
+  {
+    "name": "barley",
+    "image": "pearl-barley.png",
+    "category": "Grain",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 500,
+    "default-shopping-amount": 1000
+  },
+  {
+    "name": "bombay duck",
+    "image": "bombay-duck.jpg",
+    "category": "Seafood",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 2,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "bourbon",
+    "image": "bourbon.png",
+    "category": "Beverage",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 365,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "bitters",
+    "image": "dark-sauce.jpg",
+    "category": "Flavoring",
+    "default-unit": "mL",
+    "all-units": ["mL"],
+    "expiry-days": 365,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "brioche",
+    "image": "brioche-bun.jpg",
+    "category": "Bread",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 7,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 2
+  },
+  {
+    "name": "burrata",
+    "image": "burrata.png",
+    "category": "Cheese",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 7,
+    "threshold-quantity": 125,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "belacan",
+    "image": "shrimp-paste.jpg",
+    "category": "Seasoning",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "eggplant",
+    "image": "eggplant.png",
+    "category": "Vegetable",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 5,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 3
+  },
+  {
+    "name": "bologna",
+    "image": "ham.png",
+    "category": "Meat",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 7,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "baharat",
+    "image": "garam-masala.jpg",
+    "category": "Spice Blend",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "buttermilk biscuits",
+    "image": "buttermilk-biscuits.jpg",
+    "category": "Bread",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 7,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 2
+  },
+  {
+    "name": "berbere",
+    "image": "paprika.jpg",
+    "category": "Spice Blend",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "salt cod",
+    "image": "cod-fillet.jpg",
+    "category": "Seafood",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 3,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "boursin cheese",
+    "image": "cheddar-cheese.png",
+    "category": "Cheese",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 14,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "bilimbi fruit",
+    "image": "bilimbi-fruit.jpg",
+    "category": "Fruit",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 7,
+    "threshold-quantity": 5,
+    "default-shopping-amount": 10
+  },
+  {
+    "name": "fatback",
+    "image": "pork-belly.jpg",
+    "category": "Meat",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 7,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "biltong",
+    "image": "beef-jerky.jpg",
+    "category": "Meat",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 30,
+    "threshold-quantity": 100,
+    "default-shopping-amount": 250
+  },
+  {
+    "name": "bay leaves",
+    "image": "bay-leaves.jpg",
+    "category": "Herb",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 365,
+    "threshold-quantity": 5,
+    "default-shopping-amount": 10
+  },
+  {
+    "name": "broccoli",
+    "image": "broccoli.jpg",
+    "category": "Vegetable",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 7,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "thin baguette",
+    "image": "half-baguette.jpg",
+    "category": "Bread",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 2,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 2
+  },
+  {
+    "name": "bok choy",
+    "image": "bok-choy.jpg",
+    "category": "Vegetable",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 5,
+    "threshold-quantity": 1,
+    "default-shopping-amount": 2
+  },
+  {
+    "name": "baking mix",
+    "image": "brown-flour.jpg",
+    "category": "Flour",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 500,
+    "default-shopping-amount": 1000
+  },
+  {
+    "name": "bucatini",
+    "image": "bucatini.png",
+    "category": "Pasta",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 250,
+    "default-shopping-amount": 500
+  },
+  {
+    "name": "biscotti",
+    "image": "biscotti.jpg",
+    "category": "Pastry",
+    "default-unit": "piece",
+    "all-units": ["piece"],
+    "expiry-days": 30,
+    "threshold-quantity": 10,
+    "default-shopping-amount": 20
+  },
+  {
+    "name": "bouillon",
+    "image": "no.jpg",
+    "category": "Seasoning",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 365,
+    "threshold-quantity": 50,
+    "default-shopping-amount": 100
+  },
+  {
+    "name": "european seabass",
+    "image": "sea-bass.jpg",
+    "category": "Seafood",
+    "default-unit": "g",
+    "all-units": ["g", "kg"],
+    "expiry-days": 2,
+    "threshold-quantity": 200,
+    "default-shopping-amount": 500
+  }
+]

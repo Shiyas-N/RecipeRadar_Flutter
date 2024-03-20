@@ -16,30 +16,22 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
   final TextEditingController _ingredientController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _newQuantityController = TextEditingController();
+  final TextEditingController _unitController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  String _selectedUnit = 'kg';
+
+  final List<String> _units = ['kg', 'g', 'L', 'mL', 'nos'];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //     // Your existing app bar content...
-      //     ),
       body: Stack(
         children: [
           _auth.currentUser != null
               ? _buildIngredientList(context)
               : _buildNotAuthenticatedView(context),
-          // Positioned(
-          //   bottom: 16.0,
-          //   right: 16.0,
-          //   child: FloatingActionButton(
-          //     onPressed: () {
-          //       _showAddDialog(context);
-          //     },
-          //     child: Icon(Icons.add),
-          //   ),
-          // ),
         ],
       ),
       floatingActionButton: Column(
@@ -100,8 +92,11 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          _updateQuantity(context, ingredients[index].id,
-                              ingredientData?['quantity'] ?? 0);
+                          _updateQuantity(
+                              context,
+                              ingredients[index].id,
+                              ingredientData?['quantity'] ?? 0,
+                              ingredientData?['unit']);
                         },
                         child: Container(
                           padding:
@@ -111,7 +106,7 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
                             color: Colors.blue,
                           ),
                           child: Text(
-                            'Quantity: ${ingredientData?['quantity'] ?? 'N/A'}',
+                            'Quantity: ${ingredientData?['quantity'] ?? 'N/A'} ${ingredientData?['unit'] ?? ''}',
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -140,15 +135,11 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
     );
   }
 
-  void _updateQuantity(
-      BuildContext context, String ingredientId, String currentQuantity) {
+  void _updateQuantity(BuildContext context, String ingredientId,
+      String currentQuantity, String? currentUnit) {
     TextEditingController _newQuantityController =
         TextEditingController(text: currentQuantity);
-    double _quantity = double.tryParse(currentQuantity) ??
-        0.0; // Default to 0.0 if parsing fails
-    String displayQuantity = _quantity.truncateToDouble() == _quantity
-        ? _quantity.toInt().toString()
-        : _quantity.toStringAsFixed(1);
+    double _quantity = double.tryParse(currentQuantity) ?? 0.0;
 
     showDialog(
       context: context,
@@ -160,53 +151,66 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TextFormField(
-                    controller: _newQuantityController,
-                    keyboardType:
-                        TextInputType.numberWithOptions(decimal: true),
-                    style: TextStyle(fontSize: 18),
-                    decoration: InputDecoration(
-                      labelText: 'New Quantity',
-                      hintText: 'Enter new quantity',
-                      border: OutlineInputBorder(),
-                      suffixIcon: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              setState(() {
-                                if (_quantity > 0)
-                                  _quantity -= 0.1; // Decrease by 0.1
-                                _newQuantityController.text =
-                                    _formatQuantity(_quantity);
-                              });
-                            },
-                            icon: Icon(Icons.remove),
-                          ),
-                          IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _quantity += 0.1; // Increase by 0.1
-                                _newQuantityController.text =
-                                    _formatQuantity(_quantity);
-                              });
-                            },
-                            icon: Icon(Icons.add),
-                          ),
-                        ],
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _quantity -= 0.1; // Decrease by 0.1
+                            _newQuantityController.text =
+                                _formatQuantity(_quantity);
+                          });
+                        },
+                        icon: Icon(Icons.remove),
                       ),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        try {
-                          _quantity = double.parse(value);
-                        } catch (e) {
-                          _quantity =
-                              0.0; // Set to default value if parsing fails
-                        }
-                      });
-                    },
+                      Expanded(
+                        child: TextField(
+                          controller: _newQuantityController,
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
+                          style: TextStyle(fontSize: 18),
+                          decoration: InputDecoration(
+                            labelText: 'New Quantity',
+                            hintText: 'Enter new quantity',
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              _quantity = double.tryParse(value) ?? 0.0;
+                            });
+                          },
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _quantity += 0.1; // Increase by 0.1
+                            _newQuantityController.text =
+                                _formatQuantity(_quantity);
+                          });
+                        },
+                        icon: Icon(Icons.add),
+                      ),
+                    ],
                   ),
+                  SizedBox(height: 16),
+                  if (currentUnit != null)
+                    DropdownButton<String>(
+                      value:
+                          _selectedUnit, // Use _selectedUnit instead of currentUnit
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedUnit = newValue!; // Update _selectedUnit
+                        });
+                      },
+                      items:
+                          _units.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
                 ],
               );
             },
@@ -222,7 +226,8 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
               onPressed: () {
                 String newQuantity = _newQuantityController.text;
                 if (newQuantity.isNotEmpty) {
-                  _updateIngredientQuantity(ingredientId, newQuantity);
+                  _updateIngredientQuantity(
+                      ingredientId, newQuantity, _selectedUnit);
                   Navigator.pop(context); // Close the dialog
                 }
               },
@@ -240,7 +245,8 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
         : quantity.toStringAsFixed(1);
   }
 
-  void _updateIngredientQuantity(String ingredientId, String newQuantity) {
+  void _updateIngredientQuantity(
+      String ingredientId, String newQuantity, String newUnit) {
     User? user = _auth.currentUser;
     if (user != null) {
       _firestore
@@ -248,7 +254,7 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
           .doc(user.uid)
           .collection('ingredients')
           .doc(ingredientId)
-          .update({'quantity': newQuantity});
+          .update({'quantity': newQuantity, 'unit': newUnit});
     }
   }
 
@@ -343,9 +349,6 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
           .map((ingredient) => ingredient['name'] as String)
           .toList();
 
-      // print('Ingredients Data: $ingredientsData');
-      // print('Available Ingredients: $availableIngredients');
-
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -354,71 +357,6 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
           ),
         ),
       );
-      // Call the recipe API endpoint with availableIngredients
-      // String apiUrl =
-      //     'http://localhost:8080/api/recipe-by-ingredients?ingredients=${availableIngredients.join(',')}';
-
-      // try {
-      //   final response = await http.get(Uri.parse(apiUrl));
-      //   if (response.statusCode == 200) {
-      //     // Parse the response and extract recipe suggestions
-      //     List<dynamic> recipes = json.decode(response.body);
-
-      //     // Display the recipe suggestions to the user
-      //     showDialog(
-      //       context: context,
-      //       builder: (context) {
-      //         return AlertDialog(
-      //           title: Text('Recipe Suggestions'),
-      //           content: Column(
-      //             mainAxisSize: MainAxisSize.min,
-      //             children: [
-      //               for (var recipe in recipes)
-      //                 ListTile(
-      //                   title: Text(recipe['title']),
-      //                   subtitle: Text(
-      //                       'Missing ingredients: ${recipe['missingIngredients']}'),
-      //                   onTap: () {
-      //                     // Handle tapping on a recipe to view details or navigate to a recipe screen
-      //                   },
-      //                 ),
-      //             ],
-      //           ),
-      //           actions: [
-      //             ElevatedButton(
-      //               onPressed: () {
-      //                 Navigator.pop(context);
-      //               },
-      //               child: Text('OK'),
-      //             ),
-      //           ],
-      //         );
-      //       },
-      //     );
-      //   } else {
-      //     throw Exception('Failed to load recipe suggestions');
-      //   }
-      // } catch (e) {
-      //   print('Error fetching recipe suggestions: $e');
-      //   showDialog(
-      //     context: context,
-      //     builder: (context) {
-      //       return AlertDialog(
-      //         title: Text('Error'),
-      //         content: Text(
-      //             'Failed to load recipe suggestions. Please try again later.'),
-      //         actions: [
-      //           ElevatedButton(
-      //             onPressed: () {
-      //               Navigator.pop(context);
-      //             },
-      //             child: Text('OK'),
-      //           ),
-      //         ],
-      //       );
-      //     },
-      //   );
-      // }
     } catch (e) {
       print('Error fetching ingredients: $e');
       // Handle error fetching ingredients
@@ -484,13 +422,30 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
                       displayStringForOption: (option) => option['name'],
                     ),
                     SizedBox(height: 16),
-                    TextField(
-                      controller: _quantityController,
-                      decoration: InputDecoration(
-                        labelText: 'Quantity',
-                        hintText: 'Enter quantity',
-                        border: OutlineInputBorder(),
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _quantityController,
+                            decoration: InputDecoration(
+                              labelText: 'Quantity',
+                              hintText: 'Enter quantity',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: TextField(
+                            controller: _unitController,
+                            decoration: InputDecoration(
+                              labelText: 'Unit',
+                              hintText: 'Enter unit',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -520,7 +475,7 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
   Future<List<Map<String, dynamic>>> _fetchIngredients(
       BuildContext context) async {
     String jsonString = await DefaultAssetBundle.of(context)
-        .loadString('assets/ingredients.json');
+        .loadString('assets/ingredient3.json');
     List<dynamic> data = json.decode(jsonString);
     ingredientsData = data.cast<Map<String, dynamic>>().toList();
     return ingredientsData ??
@@ -541,7 +496,6 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
         // Find the selected ingredient in the ingredients data
         Map<String, dynamic>? selectedIngredient = ingredientsData!.firstWhere(
           (ingredient) => ingredient['name'] == _ingredientController.text,
-          // orElse: () => null,
         );
 
         if (selectedIngredient != null) {
@@ -553,8 +507,11 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
               .add({
             'name': selectedIngredient['name'],
             'quantity': _quantityController.text, // Use the quantity field
+            'unit': _selectedUnit, // Use the selected unit
             'timestamp': FieldValue.serverTimestamp(),
-            'image': selectedIngredient['image'], // Use the correct image name
+            'image': selectedIngredient['image'],
+            'expiry-days': selectedIngredient['expiry-days'],
+            'threshold': selectedIngredient['threshold-quantity'],
           });
 
           _ingredientController.clear();

@@ -34,7 +34,8 @@ class LoginPage extends StatelessWidget {
       // Display a snackbar with the error message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Sign-in failed: ${e.toString()}'),
+          // content: Text('Sign-in failed: ${e.toString()}'),
+          content: Text("Invalid Username and Password"),
           duration: Duration(seconds: 3),
         ),
       );
@@ -159,13 +160,13 @@ class LoginPage extends StatelessWidget {
                     // Call the signInWithEmailAndPassword method
                     await signInWithEmailAndPassword(context,
                         _emailController.text, _passwordController.text);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => HomePage(
-                                recipeData: recipeData,
-                              )),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) => HomePage(
+                    //             recipeData: recipeData,
+                    //           )),
+                    // );
                   },
                   child: Text('Sign In',
                       style: GoogleFonts.inter(color: Color(0xFF5DB075))),
