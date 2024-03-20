@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'recipe_details_page.dart';
 
+import 'api_config.dart';
+
 class RecipeSuggestionPage extends StatefulWidget {
   final List<String> availableIngredients;
 
@@ -26,7 +28,7 @@ class _RecipeSuggestionPageState extends State<RecipeSuggestionPage> {
 
   Future<void> _fetchRecipeSuggestions() async {
     String apiUrl =
-        'http://localhost:8080/api/recipe-by-ingredients?ingredients=${widget.availableIngredients.join(',')}';
+        '${ApiConfig.baseUrl}/api/recipe-by-ingredients?ingredients=${widget.availableIngredients.join(',')}';
 
     try {
       final response = await http.get(Uri.parse(apiUrl));

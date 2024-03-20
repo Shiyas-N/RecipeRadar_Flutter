@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'recipe_instruction_page.dart';
+import 'api_config.dart';
 
 class RecipeDetailsPage extends StatefulWidget {
   final int recipeId;
@@ -29,7 +30,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
   Future<void> fetchRecipeDetails() async {
     try {
       final response = await http.get(Uri.parse(
-          'http://localhost:8080/api/recipe-details/${widget.recipeId}'));
+          '${ApiConfig.baseUrl}/api/recipe-details/${widget.recipeId}'));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
@@ -81,9 +82,10 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
     );
   }
 
-  Future<Widget?> checkIngredientMatch(String ingredientName) async {
+  Future<Widget?> checkIngredientMatch(Map<String, dynamic> ingredient) async {
     try {
       // Fetch the ingredient from the Firestore collection
+      String ingredientName = ingredient['name'];
       final QuerySnapshot snapshot = await _firestore
           .collection('users')
           .doc(_auth.currentUser!.uid)
@@ -96,11 +98,92 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
       if (snapshot.docs.isNotEmpty) {
         return null; // Ingredient found in Firestore
       } else {
-        return Icon(Icons.add_shopping_cart);
+        return IconButton(
+          icon: Icon(Icons.add_shopping_cart),
+          onPressed: () {
+            addToCart(ingredient); // Call the addToShoppingList function
+          },
+        );
       }
     } catch (e) {
       print('Error checking ingredient match: $e');
       return null; // Error occurred
+    }
+  }
+
+  void addToCart(Map<String, dynamic> ingredient) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        String imageName = ingredient['image'].split('/').last;
+        CollectionReference shoppingCollection = FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('shopping');
+
+        QuerySnapshot querySnapshot = await shoppingCollection
+            .where('name', isEqualTo: ingredient['name'])
+            .where('quantity', isEqualTo: ingredient['amount'])
+            .get();
+
+        if (querySnapshot.size == 0) {
+          // Item does not exist, add it to the shopping list
+          await shoppingCollection.add({
+            'name': ingredient['name'],
+            'quantity': ingredient['amount'],
+            'timestamp': FieldValue.serverTimestamp(),
+            'image': imageName,
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Item added to shopping list'),
+            ),
+          );
+        } else {
+          // Item exists, prompt user to add to existing quantity
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Item already exists in shopping list'),
+                content: Text('Do you want to add to the existing quantity?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () async {
+                      // Add to existing quantity
+                      DocumentSnapshot doc = querySnapshot.docs.first;
+                      int existingQuantity = doc['quantity'];
+                      await doc.reference.update({
+                        'quantity': existingQuantity + ingredient['amount'],
+                      });
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Quantity updated'),
+                        ),
+                      );
+                    },
+                    child: Text('Yes'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('No'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      }
+    } catch (e) {
+      print('Error adding to shopping cart: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An error occurred. Please try again later.'),
+        ),
+      );
     }
   }
 
@@ -234,7 +317,7 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
           '${ingredient['measures']['metric']['amount']} ${ingredient['measures']['metric']['unitShort']}',
         ),
         trailing: FutureBuilder<Widget?>(
-          future: checkIngredientMatch(ingredient['name']),
+          future: checkIngredientMatch(ingredient),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircularProgressIndicator();

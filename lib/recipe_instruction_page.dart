@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'api_config.dart';
+
 class RecipeInstructionPage extends StatefulWidget {
   final int recipeId;
 
@@ -25,7 +27,7 @@ class _RecipeInstructionPageState extends State<RecipeInstructionPage> {
   Future<void> fetchInstructions() async {
     final response = await http.get(
       Uri.parse(
-          'http://localhost:8080/api/recipe-instruction/${widget.recipeId}'),
+          '${ApiConfig.baseUrl}/api/recipe-instruction/${widget.recipeId}'),
     );
 
     if (response.statusCode == 200) {

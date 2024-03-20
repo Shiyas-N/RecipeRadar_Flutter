@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'recipe_details_page.dart'; // Import the other file
+import 'recipe_details_page.dart';
+import 'api_config.dart';
 
 class HomePageContent extends StatefulWidget {
   @override
@@ -19,7 +20,7 @@ class _HomePageContentState extends State<HomePageContent> {
 
   Future<void> fetchData() async {
     final response =
-        await http.get(Uri.parse('http://localhost:8080/api/five-recipes'));
+        await http.get(Uri.parse('${ApiConfig.baseUrl}/api/five-recipes'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
