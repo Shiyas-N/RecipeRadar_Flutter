@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -14,6 +16,8 @@ class RecipeDetailsPage extends StatefulWidget {
 }
 
 class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   Map<String, dynamic>? recipeDetails;
 
   @override
@@ -77,81 +81,94 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
     );
   }
 
+  Future<Widget?> checkIngredientMatch(String ingredientName) async {
+    try {
+      // Fetch the ingredient from the Firestore collection
+      final QuerySnapshot snapshot = await _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .collection('ingredients')
+          .where('name', isEqualTo: ingredientName.toLowerCase())
+          .limit(1)
+          .get();
+
+      // Check if the ingredient exists in Firestore
+      if (snapshot.docs.isNotEmpty) {
+        return null; // Ingredient found in Firestore
+      } else {
+        return Icon(Icons.add_shopping_cart);
+      }
+    } catch (e) {
+      print('Error checking ingredient match: $e');
+      return null; // Error occurred
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (recipeDetails == null) {
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    List<dynamic> ingredients = recipeDetails!['extendedIngredients'];
+    List<Widget> shoppingItems = [];
+    List<Widget> nonShoppingItems = [];
+
+    for (var ingredient in ingredients) {
+      String name = ingredient['name'].toLowerCase();
+      List<String> strings = ['water', 'salt', 'sugar', 'pepper', 'sea salt'];
+      if (strings.contains(name)) {
+        nonShoppingItems.add(_buildNonShoppableIngredientCard(ingredient));
+      } else {
+        shoppingItems.add(_buildShoppableIngredientCard(ingredient));
+      }
+    }
+
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (recipeDetails == null)
-                Center(child: CircularProgressIndicator())
-              else
-                Column(
+              _buildRecipeImage(recipeDetails!['image']),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Hero(
-                      tag: '${widget.recipeId}-image',
-                      child: _buildRecipeImage(recipeDetails!['image']),
+                    SizedBox(height: 16),
+                    Text(
+                      recipeDetails!['title'],
+                      style: TextStyle(fontSize: 24),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 16),
-                          Text(
-                            recipeDetails!['title'],
-                            style: TextStyle(fontSize: 24),
-                          ),
-                          SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Icon(Icons.access_time),
-                              SizedBox(width: 8),
-                              Text(
-                                'Ready in ${recipeDetails!['readyInMinutes']} minutes',
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            'Ingredients:',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          // Create cards for each ingredient
-                          ...List.generate(
-                            recipeDetails!['extendedIngredients'].length,
-                            (index) {
-                              var ingredient =
-                                  recipeDetails!['extendedIngredients'][index];
-                              return Card(
-                                child: ListTile(
-                                  leading: SizedBox(
-                                    width: 100,
-                                    height: 100,
-                                    child: _buildIngredientImage(
-                                        ingredient['image']),
-                                  ),
-                                  title: Text(ingredient['name']),
-                                  subtitle: Text(
-                                      '${ingredient['measures']['metric']['amount']} ${ingredient['measures']['metric']['unitShort']}'),
-                                ),
-                              );
-                            },
-                          ),
-                          SizedBox(height: 16),
-                          SizedBox(height: 50), // Add some free space
-                        ],
+                    SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(Icons.access_time),
+                        SizedBox(width: 8),
+                        Text(
+                          'Ready in ${recipeDetails!['readyInMinutes']} minutes',
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      'Ingredients:',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
+                    SizedBox(height: 8),
+                    ...shoppingItems,
+                    SizedBox(height: 16),
+                    ...nonShoppingItems,
+                    SizedBox(height: 50),
                   ],
                 ),
+              ),
             ],
           ),
         ),
@@ -201,6 +218,56 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildShoppableIngredientCard(Map<String, dynamic> ingredient) {
+    return Card(
+      child: ListTile(
+        leading: SizedBox(
+          width: 100,
+          height: 100,
+          child: _buildIngredientImage(ingredient['image']),
+        ),
+        title: Text(ingredient['name']),
+        subtitle: Text(
+          '${ingredient['measures']['metric']['amount']} ${ingredient['measures']['metric']['unitShort']}',
+        ),
+        trailing: FutureBuilder<Widget?>(
+          future: checkIngredientMatch(ingredient['name']),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Icon(Icons.error);
+            } else {
+              if (snapshot.data == null) {
+                // If ingredient is found, return nothing
+                return SizedBox.shrink();
+              } else {
+                // If ingredient is not found, return the shopping cart icon
+                return snapshot.data!;
+              }
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNonShoppableIngredientCard(Map<String, dynamic> ingredient) {
+    return Card(
+      child: ListTile(
+        leading: SizedBox(
+          width: 100,
+          height: 100,
+          child: _buildIngredientImage(ingredient['image']),
+        ),
+        title: Text(ingredient['name']),
+        subtitle: Text(
+          '${ingredient['measures']['metric']['amount']} ${ingredient['measures']['metric']['unitShort']}',
+        ),
+      ),
     );
   }
 }
