@@ -30,109 +30,204 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
     return Scaffold(
       body: Stack(
         children: [
-          _auth.currentUser != null
-              ? _buildIngredientList(context)
-              : _buildNotAuthenticatedView(context),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 300,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/Inventory.png'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 200,
+            left: 40,
+            child: Text(
+              'Inventory',
+              style: TextStyle(
+                fontSize: 32,
+                color: Colors.white, // Text color
+                fontWeight: FontWeight.bold, // Bold font
+              ),
+            ),
+          ),
+          Positioned(
+            top: 75,
+            left: 20,
+            right: 20,
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(50),
+                  boxShadow: [
+                    BoxShadow(
+                        color: Colors.grey.shade400,
+                        blurRadius: 10,
+                        spreadRadius: 3,
+                        offset: const Offset(5, 5))
+                  ]),
+              child: TextFormField(
+                // controller: _searchController,
+                onChanged: (value) {
+                  // _fetchSearchResults(value);
+                },
+                decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Search here...',
+                    prefixIcon: Icon(Icons.search)),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 250, // Start from the bottom of the background image
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              padding: EdgeInsets.only(top: 5, left: 15, right: 15),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
+              child: _auth.currentUser != null
+                  ? _buildIngredientList(context)
+                  : _buildNotAuthenticatedView(context),
+            ),
+          ),
+          Positioned(
+            top: 180,
+            right: 30,
+            child: FloatingActionButton(
+              onPressed: () {
+                _showAddDialog(context);
+              },
+              backgroundColor: Colors.blue,
+              child: Icon(Icons.add),
+            ),
+          ),
         ],
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: () {
-              _showAddDialog(context);
-            },
-            child: Icon(Icons.add),
+      persistentFooterButtons: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40.0),
+          child: SizedBox(
+            width: double.infinity,
+            height: 40,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                _getRecipeSuggestions(context);
+              },
+              style: ElevatedButton.styleFrom(
+                primary: const Color.fromARGB(255, 0, 0, 0),
+                elevation: 0,
+                padding: EdgeInsets.zero,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                  side: BorderSide(color: Colors.white),
+                ),
+              ),
+              icon: Icon(
+                Icons.food_bank,
+                color: Colors.white,
+              ),
+              label: Text(
+                'Recipe Suggestions',
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.white,
+                ),
+              ),
+            ),
           ),
-          SizedBox(height: 16),
-          FloatingActionButton(
-            onPressed: () {
-              _getRecipeSuggestions(context);
-            },
-            child: Icon(Icons.food_bank),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildIngredientList(BuildContext context) {
-    return Expanded(
-      child: StreamBuilder(
-        stream: _firestore
-            .collection('users')
-            .doc(_auth.currentUser?.uid)
-            .collection('ingredients')
-            .snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (!snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+    return StreamBuilder(
+      stream: _firestore
+          .collection('users')
+          .doc(_auth.currentUser?.uid)
+          .collection('ingredients')
+          .snapshots(),
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
 
-          List<DocumentSnapshot> ingredients = snapshot.data!.docs;
+        List<DocumentSnapshot> ingredients = snapshot.data!.docs;
 
-          return ListView.builder(
-            itemCount: ingredients.length,
-            itemBuilder: (context, index) {
-              Map<String, dynamic>? ingredientData =
-                  ingredients[index].data() as Map<String, dynamic>?;
+        return ListView.builder(
+          itemCount: ingredients.length,
+          itemBuilder: (context, index) {
+            Map<String, dynamic>? ingredientData =
+                ingredients[index].data() as Map<String, dynamic>?;
 
-              return Card(
-                child: ListTile(
-                  leading: SizedBox(
-                    width: 75,
-                    height: 75,
-                    child: _buildIngredientImage(ingredientData?['image']),
-                  ),
-                  title: Text(ingredientData?['name'] ?? ''),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          _updateQuantity(
-                              context,
-                              ingredients[index].id,
-                              ingredientData?['quantity'] ?? 0,
-                              ingredientData?['unit']);
-                        },
-                        child: Container(
-                          padding:
-                              EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.blue,
-                          ),
-                          child: Text(
-                            'Quantity: ${ingredientData?['quantity'] ?? 'N/A'} ${ingredientData?['unit'] ?? ''}',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
+            return Card(
+              child: ListTile(
+                leading: SizedBox(
+                  width: 75,
+                  height: 75,
+                  child: _buildIngredientImage(ingredientData?['image']),
+                ),
+                title: Text(ingredientData?['name'] ?? ''),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        _updateQuantity(
+                            context,
+                            ingredients[index].id,
+                            ingredientData?['quantity'] ?? 0,
+                            ingredientData?['unit']);
+                      },
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.blue,
+                        ),
+                        child: Text(
+                          'Quantity: ${ingredientData?['quantity'] ?? 'N/A'} ${ingredientData?['unit'] ?? ''}',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      Text(
-                          'Added on: ${_formatTimestamp(ingredientData?['timestamp'])}'),
-                      Text(
-                          'Days to expire: ${_calculateDaysToExpire(ingredientData?['timestamp'])}'),
-                    ],
-                  ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      _deleteIngredient(ingredients[index].id);
-                    },
-                  ),
+                    ),
+                    Text(
+                        'Added on: ${_formatTimestamp(ingredientData?['timestamp'])}'),
+                    Text(
+                        'Days to expire: ${_calculateDaysToExpire(ingredientData?['timestamp'])}'),
+                  ],
                 ),
-              );
-            },
-          );
-        },
-      ),
+                trailing: IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () {
+                    _deleteIngredient(ingredients[index].id);
+                  },
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -303,13 +398,9 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
   }
 
   Future<void> _getRecipeSuggestions(BuildContext context) async {
-    // Check if the user is authenticated
     if (_auth.currentUser == null) {
-      // Show a message or navigate to the authentication page
       return;
     }
-
-    // Fetch ingredients from Firestore
     try {
       final snapshot = await _firestore
           .collection('users')
@@ -317,12 +408,10 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
           .collection('ingredients')
           .get();
 
-      // Extract ingredient data from snapshot
       List<Map<String, dynamic>> ingredientsData = snapshot.docs
           .map((doc) => doc.data() as Map<String, dynamic>)
           .toList();
 
-      // Check if there are any ingredients available
       if (ingredientsData.isEmpty) {
         showDialog(
           context: context,
@@ -345,7 +434,6 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
         return;
       }
 
-      // Extract names of available ingredients
       List<String> availableIngredients = ingredientsData
           .map((ingredient) => ingredient['name'] as String)
           .toList();
@@ -405,22 +493,30 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Autocomplete<Map<String, dynamic>>(
-                      optionsBuilder: (TextEditingValue textEditingValue) {
-                        if (textEditingValue.text.isEmpty) {
-                          return const Iterable<Map<String, dynamic>>.empty();
-                        }
-                        return snapshot.data!
-                            .where((ingredient) => ingredient['name']
-                                .toLowerCase()
-                                .contains(textEditingValue.text.toLowerCase()))
-                            .toList();
+                    Builder(
+                      builder: (BuildContext context) {
+                        return Autocomplete<Map<String, dynamic>>(
+                          optionsBuilder: (TextEditingValue textEditingValue) {
+                            if (textEditingValue.text.isEmpty) {
+                              return const Iterable<
+                                  Map<String, dynamic>>.empty();
+                            }
+                            return snapshot.data!
+                                .where((ingredient) => ingredient['name']
+                                    .toLowerCase()
+                                    .contains(
+                                        textEditingValue.text.toLowerCase()))
+                                .toList();
+                          },
+                          onSelected:
+                              (Map<String, dynamic> selectedIngredient) {
+                            _ingredientController.text =
+                                selectedIngredient['name'];
+                          },
+                          optionsMaxHeight: 200,
+                          displayStringForOption: (option) => option['name'],
+                        );
                       },
-                      onSelected: (Map<String, dynamic> selectedIngredient) {
-                        _ingredientController.text = selectedIngredient['name'];
-                      },
-                      optionsMaxHeight: 200,
-                      displayStringForOption: (option) => option['name'],
                     ),
                     SizedBox(height: 16),
                     Row(
@@ -479,8 +575,7 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
         .loadString('assets/ingredient3.json');
     List<dynamic> data = json.decode(jsonString);
     ingredientsData = data.cast<Map<String, dynamic>>().toList();
-    return ingredientsData ??
-        []; // Use an empty list if ingredientsData is null
+    return ingredientsData ?? [];
   }
 
   Future<void> _addIngredient(BuildContext context) async {
@@ -494,21 +589,19 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
           .get();
 
       if (existingIngredients.docs.isEmpty) {
-        // Find the selected ingredient in the ingredients data
         Map<String, dynamic>? selectedIngredient = ingredientsData!.firstWhere(
           (ingredient) => ingredient['name'] == _ingredientController.text,
         );
 
         if (selectedIngredient != null) {
-          // If the ingredient is not already in the list, add it with the quantity
           await _firestore
               .collection('users')
               .doc(user.uid)
               .collection('ingredients')
               .add({
             'name': selectedIngredient['name'],
-            'quantity': _quantityController.text, // Use the quantity field
-            'unit': _selectedUnit, // Use the selected unit
+            'quantity': _quantityController.text,
+            'unit': _selectedUnit,
             'timestamp': FieldValue.serverTimestamp(),
             'image': selectedIngredient['image'],
             'expiry-days': selectedIngredient['expiry-days'],
@@ -519,7 +612,6 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
           _quantityController.clear();
         }
       } else {
-        // If the ingredient is already in the list, show a warning
         showDialog(
           context: context,
           builder: (context) {

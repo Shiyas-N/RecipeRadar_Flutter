@@ -24,9 +24,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('RecipeRadar'),
-      ),
       body: _buildPage(_currentIndex, widget.recipeData),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Color(0xFF4CAF50),
