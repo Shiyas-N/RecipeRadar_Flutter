@@ -59,7 +59,6 @@ class _SplashScreenState extends State<SplashScreen> {
       final Map<String, dynamic> jsonMap = json.decode(jsonData);
       List<dynamic> recipesJson = jsonMap['recipes'];
 
-      
       setState(() {
         recipeData = recipesJson
             .map((recipeJson) => Recipe.fromJson(recipeJson))

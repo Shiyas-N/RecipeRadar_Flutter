@@ -41,6 +41,14 @@ class _RecipeInstructionPageState extends State<RecipeInstructionPage> {
     }
   }
 
+  void goToNextStep() {
+    setState(() {
+      if (currentIndex < instructions!.length - 1) {
+        currentIndex++;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,40 +57,30 @@ class _RecipeInstructionPageState extends State<RecipeInstructionPage> {
       ),
       body: instructions == null
           ? Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: instructions![currentIndex]['steps'].length,
-                    itemBuilder: (context, index) {
-                      return buildStepCard(
-                          instructions![currentIndex]['steps'][index]);
-                    },
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Check if there are more steps at the current index
-                    if (currentIndex < instructions!.length - 1 &&
-                        currentIndex <
-                            instructions![currentIndex]['steps'].length - 1) {
-                      // Increment the index and rebuild the widget
-                      setState(() {
-                        currentIndex++;
-                        print("now=$currentIndex");
-                      });
-                    } else {
-                      print('No more instructions');
-                    }
-                  },
-                  child: Text('Next'),
-                ),
-              ],
+          : buildStepPage(instructions![currentIndex]),
+      bottomNavigationBar: BottomAppBar(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: currentIndex > 0
+                  ? () => setState(() => currentIndex--)
+                  : null,
             ),
+            Text('${currentIndex + 1}/${instructions!.length}'),
+            IconButton(
+              icon: Icon(Icons.arrow_forward),
+              onPressed:
+                  currentIndex < instructions!.length - 1 ? goToNextStep : null,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget buildStepCard(Map<String, dynamic> stepData) {
+  Widget buildStepPage(dynamic instruction) {
     return Card(
       margin: EdgeInsets.all(8),
       child: Padding(
@@ -91,12 +89,12 @@ class _RecipeInstructionPageState extends State<RecipeInstructionPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Step ${stepData['number']}',
+              'Step ${instruction['steps'][0]['number']}',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
             Text(
-              stepData['step'],
+              instruction['steps'][0]['step'],
               style: TextStyle(fontSize: 14),
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'recipe_suggestion_page.dart';
@@ -82,8 +83,8 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
               return Card(
                 child: ListTile(
                   leading: SizedBox(
-                    width: 100,
-                    height: 100,
+                    width: 75,
+                    height: 75,
                     child: _buildIngredientImage(ingredientData?['image']),
                   ),
                   title: Text(ingredientData?['name'] ?? ''),
@@ -267,8 +268,8 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
 
     return Image.network(
       url,
-      width: 100,
-      height: 100,
+      width: 50,
+      height: 50,
       fit: BoxFit.fill,
       errorBuilder: (context, error, stackTrace) {
         return Container(); // Placeholder or default image

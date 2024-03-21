@@ -1,10 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'home_page.dart';
+
 
 class SignupPage extends StatelessWidget {
-  const SignupPage({super.key});
+  const SignupPage({Key? key});
+  
+
+  Future<void> _createAccount(
+      BuildContext context, String email, String password) async {
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      // Account creation successful, navigate to the home page or display success message
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text('Account created successfully!'),
+      //     duration: Duration(seconds: 3),
+      //   ),
+      // );
+      // You can navigate to another page upon successful sign-up
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage(recipeData: [],)),
+      );
+    } catch (e) {
+      // Handle sign-up errors
+      print(e.toString());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to create account: ${e.toString()}'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController _usernameController = TextEditingController();
+    TextEditingController _firstNameController = TextEditingController();
+    TextEditingController _lastNameController = TextEditingController();
+    TextEditingController _emailController = TextEditingController();
+    TextEditingController _passwordController = TextEditingController();
+
     return Scaffold(
       // appBar: AppBar(
       //   title: Text('Login / Sign Up'),
@@ -20,73 +61,106 @@ class SignupPage extends StatelessWidget {
           ),
           // Content overlay
           Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                // Email input field
-                Container(
-                  padding: EdgeInsets.all(20.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Name',
-                      labelText: 'Email',
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.7),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Username input field
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      controller: _usernameController,
+                      decoration: InputDecoration(
+                        hintText: 'Username',
+                        labelText: 'Username',
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.7),
+                      ),
                     ),
                   ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(20.0),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Email',
-                      labelText: 'Email',
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.7),
+                  // First name input field
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      controller: _firstNameController,
+                      decoration: InputDecoration(
+                        hintText: 'First Name',
+                        labelText: 'First Name',
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.7),
+                      ),
                     ),
                   ),
-                ),
-                // Password input field
-                Container(
-                  padding: EdgeInsets.all(20.0),
-                  child: TextField(
-                    obscureText: true,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your password',
-                      labelText: 'Password',
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.7),
+                  // Last name input field
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      controller: _lastNameController,
+                      decoration: InputDecoration(
+                        hintText: 'Last Name',
+                        labelText: 'Last Name',
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.7),
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 20),
-                // Login button
-                Container(
-                  width: 200,
-                  child: ElevatedButton(
+                  // Email input field
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      controller: _emailController,
+                      decoration: InputDecoration(
+                        hintText: 'Email',
+                        labelText: 'Email',
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.7),
+                      ),
+                    ),
+                  ),
+                  // Password input field
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      controller: _passwordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: 'Enter your password',
+                        labelText: 'Password',
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.7),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  // Continue button
+                  Container(
+                    width: 200,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        await _createAccount(context, _emailController.text,
+                            _passwordController.text);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFF5DB075), // #5DB075
+                      ),
+                      child: Text('Continue'),
+                    ),
+                  ),
+                  // Login text button
+                  TextButton(
                     onPressed: () {
-                      // Implement login functionality
+                      // Implement navigation to login page
                     },
-                    style: ElevatedButton.styleFrom(
+                    style: TextButton.styleFrom(
                       primary: Color(0xFF5DB075), // #5DB075
                     ),
-                    child: Text('Login'),
+                    child: Text("Already have an account? Log in"),
                   ),
-                ),
-                // Sign Up text button
-                TextButton(
-                  onPressed: () {
-                    // Implement navigation to signup page
-                  },
-                  style: TextButton.styleFrom(
-                    primary: Color(0xFF5DB075), // #5DB075
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 40.0),
                   ),
-                  child: Text("Don't have an account? Sign up"),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 40.0),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

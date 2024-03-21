@@ -203,7 +203,7 @@ class _ShoppingCartPageContentState extends State<ShoppingCartPageContent> {
   Future<List<Map<String, dynamic>>> _fetchIngredients(
       BuildContext context) async {
     String jsonString = await DefaultAssetBundle.of(context)
-        .loadString('assets/ingredients.json');
+        .loadString('assets/ingredient3.json');
     List<dynamic> data = json.decode(jsonString);
     ingredientsData = data.cast<Map<String, dynamic>>().toList();
     return ingredientsData ??

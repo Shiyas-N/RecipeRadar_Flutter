@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'signup_page.dart';
+import 'signup2.dart';
 import 'home_page.dart';
 import 'recipe.dart';
 
@@ -42,30 +42,30 @@ class LoginPage extends StatelessWidget {
     }
   }
 
-  Future<void> signUpWithEmailAndPassword(
-      BuildContext context, String email, String password) async {
-    try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+  // Future<void> signUpWithEmailAndPassword(
+  //     BuildContext context, String email, String password) async {
+  //   try {
+  //     await FirebaseAuth.instance.createUserWithEmailAndPassword(
+  //       email: email,
+  //       password: password,
+  //     );
 
-      // User signed up successfully
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => HomePage(recipeData: recipeData)),
-      );
-    } catch (e) {
-      print(e.toString());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Sign-up failed: ${e.toString()}'),
-          duration: Duration(seconds: 3),
-        ),
-      );
-    }
-  }
+  //     // User signed up successfully
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(
+  //           builder: (context) => HomePage(recipeData: recipeData)),
+  //     );
+  //   } catch (e) {
+  //     print(e.toString());
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         content: Text('Sign-up failed: ${e.toString()}'),
+  //         duration: Duration(seconds: 3),
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

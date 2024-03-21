@@ -82,21 +82,90 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
     );
   }
 
-  Future<Widget?> checkIngredientMatch(Map<String, dynamic> ingredient) async {
+  Future<Widget> checkIngredientMatch(Map<String, dynamic> ingredient) async {
+    User? user = _auth.currentUser;
     try {
-      // Fetch the ingredient from the Firestore collection
       String ingredientName = ingredient['name'];
-      final QuerySnapshot snapshot = await _firestore
-          .collection('users')
-          .doc(_auth.currentUser!.uid)
-          .collection('ingredients')
-          .where('name', isEqualTo: ingredientName.toLowerCase())
-          .limit(1)
-          .get();
+      double requiredQuantity = ingredient['measures']['metric']['amount'];
+      String requiredUnit = ingredient['measures']['metric']['unitShort'];
 
-      // Check if the ingredient exists in Firestore
-      if (snapshot.docs.isNotEmpty) {
-        return null; // Ingredient found in Firestore
+      List<String> exceptions = [
+        "asparagus",
+        "spinach"
+      ]; // Add more exceptions as needed
+
+      List<String> nameVariations = [ingredientName.toLowerCase()];
+      if (!exceptions.contains(ingredientName.toLowerCase()) &&
+          ingredientName.endsWith('s')) {
+        nameVariations.add(ingredientName
+            .substring(0, ingredientName.length - 1)
+            .toLowerCase());
+        nameVariations.add(ingredientName
+            .substring(0, ingredientName.length - 2)
+            .toLowerCase()); // Handle "es" plural
+      } else {
+        nameVariations.add(ingredientName + 's');
+      }
+      for (String variation in nameVariations) {
+        final QuerySnapshot snapshot = await _firestore
+            .collection('users')
+            .doc(_auth.currentUser!.uid)
+            .collection('ingredients')
+            .where('name', isEqualTo: variation)
+            .limit(1)
+            .get();
+
+        if (snapshot.docs.isNotEmpty) {
+          // Ingredient found in Firestore, check quantity and unit
+          var ingredientDoc = snapshot.docs.first;
+          String? availableQuantityStr = ingredientDoc['quantity'] as String?;
+          double? availableQuantity = availableQuantityStr != null
+              ? double.tryParse(availableQuantityStr)
+              : null;
+          String? availableUnit = ingredientDoc['unit'] as String?;
+          if (availableQuantity != null && availableUnit != null) {
+            if (availableUnit == requiredUnit) {
+              if (availableQuantity >= requiredQuantity) {
+                return Container(); // Ingredient found and available quantity is sufficient
+              } else {
+                // Return IconButton if required quantity is greater than available quantity
+                return IconButton(
+                  icon: Icon(Icons.add_shopping_cart),
+                  onPressed: () {
+                    addToCart(
+                        ingredient); // Call the addToShoppingList function
+                  },
+                );
+              }
+            } else {
+              // Convert the required quantity to the available unit and compare
+              double convertedQuantity = await convertQuantity(ingredientName,
+                  requiredQuantity, requiredUnit, availableUnit);
+              if (convertedQuantity <= availableQuantity) {
+                return Container(); // Ingredient found and converted quantity is sufficient
+              } else {
+                // Return IconButton if required quantity is greater than available quantity
+                return IconButton(
+                  icon: Icon(Icons.add_shopping_cart),
+                  onPressed: () {
+                    addToCart(
+                        ingredient); // Call the addToShoppingList function
+                  },
+                );
+              }
+            }
+          }
+        }
+      }
+
+      // If no match was found, return IconButton if required quantity is greater than 0
+      if (requiredQuantity > 0) {
+        return IconButton(
+          icon: Icon(Icons.add_shopping_cart),
+          onPressed: () {
+            addToCart(ingredient); // Call the addToShoppingList function
+          },
+        );
       } else {
         return IconButton(
           icon: Icon(Icons.add_shopping_cart),
@@ -104,10 +173,32 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
             addToCart(ingredient); // Call the addToShoppingList function
           },
         );
+        ; // No matched ingredient and no requirement for the ingredient
       }
     } catch (e) {
       print('Error checking ingredient match: $e');
-      return null; // Error occurred
+      return Container(); // Error occurred
+    }
+  }
+
+  Future<double> convertQuantity(String ingredientName, double sourceAmount,
+      String sourceUnit, String targetUnit) async {
+    try {
+      String baseUrl = '${ApiConfig.baseUrl}/api/recipes/convert';
+      String url =
+          '$baseUrl?ingredientName=$ingredientName&sourceAmount=$sourceAmount&sourceUnit=$sourceUnit&targetUnit=$targetUnit';
+
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        return double.parse(response.body);
+      } else {
+        print('Failed to convert quantity: ${response.statusCode}');
+        return sourceAmount;
+      }
+    } catch (e) {
+      print('Error converting quantity: $e');
+      return sourceAmount;
     }
   }
 
@@ -150,7 +241,6 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                 actions: <Widget>[
                   TextButton(
                     onPressed: () async {
-                      // Add to existing quantity
                       DocumentSnapshot doc = querySnapshot.docs.first;
                       int existingQuantity = doc['quantity'];
                       await doc.reference.update({
@@ -201,7 +291,16 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
 
     for (var ingredient in ingredients) {
       String name = ingredient['name'].toLowerCase();
-      List<String> strings = ['water', 'salt', 'sugar', 'pepper', 'sea salt'];
+      List<String> strings = [
+        'water',
+        'salt',
+        'sugar',
+        'pepper',
+        'sea salt',
+        'seasoning',
+        'combination of water',
+        'additional granulated sugar'
+      ];
       if (strings.contains(name)) {
         nonShoppingItems.add(_buildNonShoppableIngredientCard(ingredient));
       } else {
@@ -306,33 +405,43 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
 
   Widget _buildShoppableIngredientCard(Map<String, dynamic> ingredient) {
     return Card(
-      child: ListTile(
-        leading: SizedBox(
-          width: 100,
-          height: 100,
-          child: _buildIngredientImage(ingredient['image']),
-        ),
-        title: Text(ingredient['name']),
-        subtitle: Text(
-          '${ingredient['measures']['metric']['amount']} ${ingredient['measures']['metric']['unitShort']}',
-        ),
-        trailing: FutureBuilder<Widget?>(
-          future: checkIngredientMatch(ingredient),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            } else if (snapshot.hasError) {
-              return Icon(Icons.error);
-            } else {
-              if (snapshot.data == null) {
-                // If ingredient is found, return nothing
-                return SizedBox.shrink();
-              } else {
-                // If ingredient is not found, return the shopping cart icon
-                return snapshot.data!;
-              }
-            }
-          },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 75,
+              height: 75,
+              child: _buildIngredientImage(ingredient['image']),
+            ),
+            Expanded(
+              child: ListTile(
+                title: Text(ingredient['name']),
+                subtitle: Text(
+                  '${ingredient['measures']['metric']['amount']} ${ingredient['measures']['metric']['unitShort']}',
+                ),
+              ),
+            ),
+            FutureBuilder<Widget?>(
+              future: checkIngredientMatch(ingredient),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Icon(Icons.error);
+                } else {
+                  if (snapshot.data == null) {
+                    // If ingredient is found, return nothing
+                    return SizedBox.shrink();
+                  } else {
+                    // If ingredient is not found, return the shopping cart icon
+                    return snapshot.data!;
+                  }
+                }
+              },
+            ),
+          ],
         ),
       ),
     );

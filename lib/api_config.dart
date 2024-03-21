@@ -1,4 +1,4 @@
 class ApiConfig {
-  static const String baseUrl = 'http://localhost:8080';
-  // 'https://pink-gorgeous-starfish.cyclic.app/';
+  static const String baseUrl = 'https://pink-gorgeous-starfish.cyclic.app';
+  // 'http://localhost:8080';
 }
