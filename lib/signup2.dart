@@ -1,34 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'home_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class SignupPage extends StatelessWidget {
-  const SignupPage({super.key});
+class SignupPage extends StatefulWidget {
+  const SignupPage({Key? key}) : super(key: key);
+
+  @override
+  State<SignupPage> createState() => _SignupPageState();
+}
+
+class _SignupPageState extends State<SignupPage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   Future<void> _createAccount(
-      BuildContext context, String email, String password) async {
+      BuildContext context, String name, String email, String password) async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      // Create user account
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      // Account creation successful, navigate to the home page or display success message
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     content: Text('Account created successfully!'),
-      //     duration: Duration(seconds: 3),
-      //   ),
-      // );
-      // You can navigate to another page upon successful sign-up
+
+      // Get the user ID
+      String userId = userCredential.user!.uid;
+
+      // Create a document for the user in Firestore
+      await FirebaseFirestore.instance.collection('users').doc(userId).set({
+        'email': email,
+        'usename': name,
+      });
+
+      // Navigate to the home page
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-            builder: (context) => HomePage(
-                  recipeData: [],
-                )),
+        MaterialPageRoute(builder: (context) => HomePage()),
       );
     } catch (e) {
-      // Handle sign-up errors
+      // Handle errors
       print(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -41,10 +55,6 @@ class SignupPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController _usernameController = TextEditingController();
-    TextEditingController _emailController = TextEditingController();
-    TextEditingController _passwordController = TextEditingController();
-    TextEditingController _confirmPasswordController = TextEditingController();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -81,25 +91,29 @@ class SignupPage extends StatelessWidget {
                     TextField(
                       controller: _usernameController,
                       decoration: InputDecoration(
-                          hintText: "Username",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
-                              borderSide: BorderSide.none),
-                          fillColor: Colors.purple.withOpacity(0.1),
-                          filled: true,
-                          prefixIcon: const Icon(Icons.person)),
+                        hintText: "Username",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(18),
+                          borderSide: BorderSide.none,
+                        ),
+                        fillColor: Colors.purple.withOpacity(0.1),
+                        filled: true,
+                        prefixIcon: const Icon(Icons.person),
+                      ),
                     ),
                     const SizedBox(height: 20),
                     TextField(
                       controller: _emailController,
                       decoration: InputDecoration(
-                          hintText: "Email",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
-                              borderSide: BorderSide.none),
-                          fillColor: Colors.purple.withOpacity(0.1),
-                          filled: true,
-                          prefixIcon: const Icon(Icons.email)),
+                        hintText: "Email",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(18),
+                          borderSide: BorderSide.none,
+                        ),
+                        fillColor: Colors.purple.withOpacity(0.1),
+                        filled: true,
+                        prefixIcon: const Icon(Icons.email),
+                      ),
                     ),
                     const SizedBox(height: 20),
                     TextField(
@@ -107,8 +121,9 @@ class SignupPage extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: "Password",
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18),
-                            borderSide: BorderSide.none),
+                          borderRadius: BorderRadius.circular(18),
+                          borderSide: BorderSide.none,
+                        ),
                         fillColor: Colors.purple.withOpacity(0.1),
                         filled: true,
                         prefixIcon: const Icon(Icons.password),
@@ -121,8 +136,9 @@ class SignupPage extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: "Confirm Password",
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18),
-                            borderSide: BorderSide.none),
+                          borderRadius: BorderRadius.circular(18),
+                          borderSide: BorderSide.none,
+                        ),
                         fillColor: Colors.purple.withOpacity(0.1),
                         filled: true,
                         prefixIcon: const Icon(Icons.password),
@@ -132,22 +148,33 @@ class SignupPage extends StatelessWidget {
                   ],
                 ),
                 Container(
-                    padding: const EdgeInsets.only(top: 3, left: 3),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        await _createAccount(context, _emailController.text,
-                            _passwordController.text);
-                      },
-                      child: const Text(
-                        "Sign up",
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        shape: const StadiumBorder(),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: const Color.fromARGB(255, 8, 6, 8),
-                      ),
-                    )),
+                  padding: const EdgeInsets.only(top: 3, left: 3),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if (_passwordController.text ==
+                          _confirmPasswordController.text) {
+                        await _createAccount(context, _usernameController.text,
+                            _emailController.text, _passwordController.text);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Passwords do not match"),
+                            duration: Duration(seconds: 3),
+                          ),
+                        );
+                      }
+                    },
+                    child: const Text(
+                      "Sign up",
+                      style: TextStyle(fontSize: 20, color: Colors.white70),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      shape: const StadiumBorder(),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+                    ),
+                  ),
+                ),
                 const Center(child: Text("Or")),
                 Container(
                   height: 45,
@@ -172,12 +199,11 @@ class SignupPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          height: 30.0,
-                          width: 30.0,
+                          height: 25.0,
+                          width: 25.0,
                           decoration: const BoxDecoration(
                             image: DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/login_signup/google.png'),
+                                image: AssetImage('assets/images/google.png'),
                                 fit: BoxFit.cover),
                             shape: BoxShape.circle,
                           ),

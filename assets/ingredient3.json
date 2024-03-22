@@ -15,9 +15,19 @@
     "category": "vegetable",
     "default-unit": "g",
     "all-units": ["g", "kg"],
-    "expiry-days": 30,
+    "expiry-days": 7,
     "threshold-quantity": 500,
     "default-shopping-amount": 100
+  },
+  {
+    "name": "douchi",
+    "image": "douchi.jpg",
+    "category": "Legumes",
+    "default_unit": "g",
+    "all_units": ["g", "kg"],
+    "expiry_days": 30,
+    "threshold_quantity": 250,
+    "default_shopping_amount": 500
   },
   {
     "name": "ale",
@@ -6589,16 +6599,7 @@
     "threshold_quantity": 200,
     "default_shopping_amount": 400
   },
-  {
-    "name": "eggnog",
-    "image": "eggnog.png",
-    "category": "Dairy",
-    "default_unit": "mL",
-    "all_units": ["mL", "L"],
-    "expiry_days": 7,
-    "threshold_quantity": 500,
-    "default_shopping_amount": 1000
-  },
+
   {
     "name": "escarole",
     "image": "escarole.jpg",
@@ -9359,16 +9360,7 @@
     "threshold_quantity": 250,
     "default_shopping_amount": 500
   },
-  {
-    "name": "douchi",
-    "image": "douchi.jpg",
-    "category": "Legumes",
-    "default_unit": "g",
-    "all_units": ["g", "kg"],
-    "expiry_days": 30,
-    "threshold_quantity": 250,
-    "default_shopping_amount": 500
-  },
+
   {
     "name": "fat free whipped topping",
     "image": "whipped-cream.jpg",
@@ -10489,16 +10481,7 @@
     "threshold-quantity": 2,
     "default-shopping-amount": 6
   },
-  {
-    "name": "mung beans",
-    "image": "mung-beans.png",
-    "category": "Legumes",
-    "default-unit": "g",
-    "all-units": ["g", "kg"],
-    "expiry-days": 30,
-    "threshold-quantity": 100,
-    "default-shopping-amount": 500
-  },
+
   {
     "name": "petite peas",
     "image": "peas.jpg",
@@ -19180,16 +19163,6 @@
     "default-shopping-amount": 500
   },
   {
-    "name": "mung beans",
-    "image": "mung-beans.png",
-    "category": "Grains and Legumes",
-    "default-unit": "g",
-    "all-units": ["g", "kg"],
-    "expiry-days": 365,
-    "threshold-quantity": 200,
-    "default-shopping-amount": 500
-  },
-  {
     "name": "maui onion",
     "image": "sweet-onion.png",
     "category": "Produce",
@@ -21798,16 +21771,6 @@
     "expiry-days": 90,
     "threshold-quantity": 100,
     "default-shopping-amount": 200
-  },
-  {
-    "name": "shirataki pasta",
-    "image": "shirataki-noodles.jpg",
-    "category": "Pasta and Grains",
-    "default-unit": "g",
-    "all-units": ["g", "kg"],
-    "expiry-days": 14,
-    "threshold-quantity": 200,
-    "default-shopping-amount": 400
   },
   {
     "name": "chow mein noodles",
@@ -27400,16 +27363,7 @@
     "threshold_quantity": 200,
     "default_shopping_amount": 400
   },
-  {
-    "name": "grapes",
-    "image": "red-grapes.jpg",
-    "category": "Fruit",
-    "default_unit": "g",
-    "all_units": ["g", "kg"],
-    "expiry_days": 7,
-    "threshold_quantity": 250,
-    "default_shopping_amount": 500
-  },
+
   {
     "name": "ridge gourd",
     "image": "ridge-gourds.jpg",
@@ -29630,16 +29584,7 @@
     "threshold_quantity": 200,
     "default_shopping_amount": 500
   },
-  {
-    "name": "shirataki pasta",
-    "image": "shirataki-noodles.jpg",
-    "category": "Grains & Pasta",
-    "default_unit": "g",
-    "all_units": ["g", "kg"],
-    "expiry_days": 30,
-    "threshold_quantity": 200,
-    "default_shopping_amount": 500
-  },
+
   {
     "name": "starburst candies",
     "image": "starburst-candy.jpg",
@@ -36800,35 +36745,5 @@
     "expiry_days": 365,
     "threshold_quantity": 1,
     "default_shopping_amount": 2
-  },
-  {
-    "name": "shirataki pasta",
-    "image": "shirataki-noodles.jpg",
-    "category": "Pasta",
-    "default_unit": "gram",
-    "all_units": ["g", "kg"],
-    "expiry_days": 30,
-    "threshold_quantity": 200,
-    "default_shopping_amount": 400
-  },
-  {
-    "name": "grapefruit zest",
-    "image": "orange-zest.png",
-    "category": "Fruit",
-    "default_unit": "gram",
-    "all_units": ["g", "kg"],
-    "expiry_days": 14,
-    "threshold_quantity": 20,
-    "default_shopping_amount": 50
-  },
-  {
-    "name": "blood orange zest",
-    "image": "orange-zest.png",
-    "category": "Fruit",
-    "default_unit": "gram",
-    "all_units": ["g", "kg"],
-    "expiry_days": 14,
-    "threshold_quantity": 20,
-    "default_shopping_amount": 50
   }
 ]
