@@ -26,6 +26,7 @@ flutter:
   assets:
     - assets/LoginBG.png
     - assets/images/Inventory.png
+    - assets/images/google.png
     - assets/allrecipedata.json
     - assets/recipedetails2.json
     - assets/ingredients.json

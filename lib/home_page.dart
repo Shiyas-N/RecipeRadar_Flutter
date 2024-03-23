@@ -4,12 +4,10 @@ import 'search_page_content.dart';
 import 'refrigerator_page_content.dart';
 import 'shopping_cart_page_content.dart';
 import 'profile_page_content.dart';
-import 'recipe.dart'; // Add this line to import the recipe.dart file
+import 'recipe.dart';
 
 class HomePage extends StatefulWidget {
-  final List<Recipe> recipeData; // Add recipeData as a parameter
-
-  HomePage({required this.recipeData}); // Add constructor to receive recipeData
+  // const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -18,13 +16,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
-  final double _selectedIconSize = 35.0; // Size of the selected icon
-  final double _unselectedIconSize = 30.0; // Size of the unselected icons
+  final double _selectedIconSize = 35.0;
+  final double _unselectedIconSize = 30.0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildPage(_currentIndex, widget.recipeData),
+      body: _buildPage(_currentIndex),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Color(0xFF4CAF50),
         currentIndex: _currentIndex,
@@ -37,7 +35,7 @@ class _HomePageState extends State<HomePage> {
         },
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        iconSize: _unselectedIconSize, // Set initial size for unselected icons
+        iconSize: _unselectedIconSize,
         items: [
           _buildNavBarItem(Icons.home, 0),
           _buildNavBarItem(Icons.search, 1),
@@ -51,28 +49,24 @@ class _HomePageState extends State<HomePage> {
 
   BottomNavigationBarItem _buildNavBarItem(IconData icon, int index) {
     return BottomNavigationBarItem(
-      icon: index == _currentIndex
-          ? _selectedIcon(icon) // Display larger icon for selected item
-          : Icon(icon),
-      label: '', // Remove labels
+      icon: index == _currentIndex ? _selectedIcon(icon) : Icon(icon),
+      label: '',
     );
   }
 
   Widget _selectedIcon(IconData icon) {
     return Transform.scale(
-      scale: _selectedIconSize / _unselectedIconSize, // Scale factor
+      scale: _selectedIconSize / _unselectedIconSize,
       child: Icon(icon, size: _selectedIconSize),
     );
   }
 
-  Widget _buildPage(int index, List<Recipe> recipeData) {
+  Widget _buildPage(int index) {
     switch (index) {
       case 0:
         return HomePageContent();
       case 1:
-        return SearchPageContent(
-            // recipeData:recipeData,
-            );
+        return SearchPageContent();
       case 2:
         return RefrigeratorPageContent();
       case 3:
