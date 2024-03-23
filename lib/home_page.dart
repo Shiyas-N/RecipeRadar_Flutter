@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'home_page_content.dart';
 import 'search_page_content.dart';
 import 'refrigerator_page_content.dart';
-// import 'shopping_cart_page_content.dart';
 import 'test.dart';
 import 'profile_page_content.dart';
 import 'recipe.dart';

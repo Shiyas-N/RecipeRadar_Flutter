@@ -4,14 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'login2.dart';
-// import 'recipe.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   runApp(MyApp());
 }
 
@@ -35,8 +33,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  // List<Recipe> recipeData = [];
-
   @override
   void initState() {
     super.initState();
@@ -50,25 +46,6 @@ class _SplashScreenState extends State<SplashScreen> {
       );
     });
   }
-
-  // Future<void> loadRecipeData() async {
-  //   try {
-  //     String jsonData = await DefaultAssetBundle.of(context)
-  //         .loadString('assets/allrecipedata.json');
-
-  //     final Map<String, dynamic> jsonMap = json.decode(jsonData);
-  //     List<dynamic> recipesJson = jsonMap['recipes'];
-
-  //     setState(() {
-  //       recipeData = recipesJson
-  //           .map((recipeJson) => Recipe.fromJson(recipeJson))
-  //           .toList();
-  //     });
-  //   } catch (e) {
-  //     print('Error loading recipe data: $e');
-  //     // Handle the error as needed
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {

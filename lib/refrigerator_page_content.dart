@@ -179,6 +179,12 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
             Map<String, dynamic>? ingredientData =
                 ingredients[index].data() as Map<String, dynamic>?;
 
+            if (_isExpired(ingredientData)) {
+              _deleteIngredient(ingredients[index].id);
+              _showExpiredDialog(context, ingredientData?['name']);
+              return Container();
+            }
+
             return Card(
               child: ListTile(
                 leading: SizedBox(
@@ -229,6 +235,43 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
               ),
             );
           },
+        );
+      },
+    );
+  }
+
+  bool _isExpired(Map<String, dynamic>? ingredientData) {
+    if (ingredientData == null ||
+        ingredientData['timestamp'] == null ||
+        ingredientData['expiry-days'] == null) {
+      return false;
+    }
+
+    Timestamp timestamp = ingredientData['timestamp'];
+    int expiryDays = ingredientData['expiry-days'];
+
+    DateTime addedDate = timestamp.toDate();
+    DateTime dueDate = addedDate.add(Duration(days: expiryDays));
+    DateTime currentDate = DateTime.now();
+
+    return currentDate.isAfter(dueDate);
+  }
+
+  void _showExpiredDialog(BuildContext context, String? itemName) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Expired Item'),
+          content: Text('The item "$itemName" is expired.'),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('OK'),
+            ),
+          ],
         );
       },
     );

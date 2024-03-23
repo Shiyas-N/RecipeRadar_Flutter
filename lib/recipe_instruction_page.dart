@@ -1,137 +1,172 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'refrigerator_page_content.dart';
+import 'home_page.dart';
 
-import 'api_config.dart';
+class RecipeInstructionPage extends StatelessWidget {
+  final List<dynamic> analyzedInstructions;
 
-class RecipeInstructionPage extends StatefulWidget {
-  final int recipeId;
-
-  RecipeInstructionPage({Key? key, required this.recipeId}) : super(key: key);
-
-  @override
-  _RecipeInstructionPageState createState() => _RecipeInstructionPageState();
-}
-
-class _RecipeInstructionPageState extends State<RecipeInstructionPage> {
-  List<dynamic>? instructions;
-  int currentIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    // Fetch instructions when the widget is created
-    fetchInstructions();
-  }
-
-  Future<void> fetchInstructions() async {
-    final response = await http.get(
-      Uri.parse(
-          '${ApiConfig.baseUrl}/api/recipe-instruction/${widget.recipeId}'),
-    );
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      if (data != null && data.isNotEmpty && data[0]['steps'] != null) {
-        setState(() {
-          instructions = data[0]['steps'];
-        });
-      } else {
-        // Handle the case where the data or steps are null or empty
-        print('Instructions data is null or empty');
-      }
-    } else {
-      print('Failed to fetch instructions');
-    }
-  }
-
-  void goToNextStep() {
-    setState(() {
-      if (currentIndex < instructions!.length - 1) {
-        currentIndex++;
-      }
-    });
-  }
-
-  void goToPreviousStep() {
-    setState(() {
-      if (currentIndex > 0) {
-        currentIndex--;
-      }
-    });
-  }
+  const RecipeInstructionPage({Key? key, required this.analyzedInstructions})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Recipe Instructions'),
-      ),
-      body: instructions == null
-          ? Center(child: CircularProgressIndicator())
-          : buildCarousel(),
-      bottomNavigationBar: BottomAppBar(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: currentIndex > 0 ? goToPreviousStep : null,
-            ),
-            Text('${currentIndex + 1}/${instructions!.length}'),
-            IconButton(
-              icon: Icon(Icons.arrow_forward),
-              onPressed:
-                  currentIndex < instructions!.length - 1 ? goToNextStep : null,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+      body: ListView.builder(
+        itemCount: analyzedInstructions.length,
+        itemBuilder: (context, index) {
+          final instruction = analyzedInstructions[index];
+          List<dynamic> steps = instruction['steps'];
 
-  Widget buildCarousel() {
-    return PageView.builder(
-      itemCount: instructions!.length,
-      controller: PageController(initialPage: currentIndex),
-      onPageChanged: (index) {
-        setState(() {
-          currentIndex = index;
-        });
-      },
-      itemBuilder: (context, index) {
-        return buildStepPage(instructions![index]);
-      },
-    );
-  }
-
-  Widget buildStepPage(dynamic instruction) {
-    if (instruction['steps'] != null && instruction['steps'].isNotEmpty) {
-      final step = instruction['steps'][0];
-      if (step != null) {
-        return Card(
-          margin: EdgeInsets.all(8),
-          child: Padding(
-            padding: EdgeInsets.all(16),
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  'Step ${step['number']}',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Padding(
+                  padding: const EdgeInsets.only(top: 75.0),
+                  child: Text(
+                    'Instructions',
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-                SizedBox(height: 8),
-                Text(
-                  step['step'],
-                  style: TextStyle(fontSize: 14),
-                ),
+                ...steps.map((step) {
+                  List<dynamic>? ingredients = step['ingredients'];
+                  List<dynamic>? equipment = step['equipment'];
+                  String instructionText = step['step'];
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 50.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          instructionText,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        if (ingredients != null && ingredients.isNotEmpty)
+                          ...ingredients.map((ingredient) {
+                            return Card(
+                              child: ListTile(
+                                leading:
+                                    _buildIngredientImage(ingredient['image']),
+                                title: Text(ingredient['name']),
+                              ),
+                            );
+                          }).toList(),
+                        // Display equipment with images and names
+                        if (equipment != null && equipment.isNotEmpty)
+                          ...equipment.map((equipmentItem) {
+                            return Card(
+                              child: ListTile(
+                                leading: _buildEquipmentImage(
+                                    equipmentItem['image']),
+                                title: Text(equipmentItem['name']),
+                              ),
+                            );
+                          }).toList(),
+                      ],
+                    ),
+                  );
+                }).toList(),
               ],
             ),
+          );
+        },
+      ),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(top: 16.0, left: 16.0),
+        child: ClipOval(
+          child: Material(
+            color: const Color.fromARGB(255, 0, 0, 0),
+            child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: SizedBox(
+                width: 48,
+                height: 48,
+                child: Icon(Icons.arrow_back, color: Colors.white),
+              ),
+            ),
           ),
-        );
-      }
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
+      persistentFooterButtons: [
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        'Remember to update ingredient quantities in your Inventory!'),
+                  ),
+                );
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                  (route) => false,
+                );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RefrigeratorPageContent(),
+                  ),
+                );
+              },
+              child: Text('Finish', style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 16.0),
+                backgroundColor: Colors.black,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIngredientImage(String? imageName) {
+    if (imageName == null || imageName.isEmpty) {
+      // Placeholder image
+      return SizedBox(
+        width: 100,
+        height: 100,
+        child: Icon(Icons.image),
+      );
     }
-    // Return an empty container if there are no steps or if the step is null
-    return Container();
+
+    // Use Image.network for loading the ingredient image
+    return Image.network(
+      'https://spoonacular.com/cdn/ingredients_100x100/$imageName',
+      width: 100,
+      height: 100,
+      fit: BoxFit.cover,
+    );
+  }
+
+  Widget _buildEquipmentImage(String? imageName) {
+    if (imageName == null || imageName.isEmpty) {
+      // Placeholder image
+      return SizedBox(
+        width: 100,
+        height: 100,
+        child: Icon(Icons.image),
+      );
+    }
+
+    // Use Image.network for loading the equipment image
+    return Image.network(
+      'https://spoonacular.com/cdn/equipment_100x100/$imageName',
+      width: 50,
+      height: 50,
+      fit: BoxFit.cover,
+    );
   }
 }

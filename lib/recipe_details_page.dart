@@ -409,7 +409,8 @@ class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => RecipeInstructionPage(
-                      recipeId: widget.recipeId,
+                      analyzedInstructions:
+                          recipeDetails!['analyzedInstructions'],
                     ),
                   ),
                 );

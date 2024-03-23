@@ -17,7 +17,7 @@ class _SearchPageContentState extends State<SearchPageContent> {
   List<dynamic> _searchResults = [];
 
   void _fetchSearchResults(String query) async {
-    if (query.length < 5) {
+    if (query.length < 3) {
       return;
     }
 
