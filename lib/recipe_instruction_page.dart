@@ -32,11 +32,15 @@ class _RecipeInstructionPageState extends State<RecipeInstructionPage> {
 
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
-      setState(() {
-        instructions = data;
-      });
+      if (data != null && data.isNotEmpty && data[0]['steps'] != null) {
+        setState(() {
+          instructions = data[0]['steps'];
+        });
+      } else {
+        // Handle the case where the data or steps are null or empty
+        print('Instructions data is null or empty');
+      }
     } else {
-      // Handle error
       print('Failed to fetch instructions');
     }
   }
@@ -49,6 +53,14 @@ class _RecipeInstructionPageState extends State<RecipeInstructionPage> {
     });
   }
 
+  void goToPreviousStep() {
+    setState(() {
+      if (currentIndex > 0) {
+        currentIndex--;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,16 +69,14 @@ class _RecipeInstructionPageState extends State<RecipeInstructionPage> {
       ),
       body: instructions == null
           ? Center(child: CircularProgressIndicator())
-          : buildStepPage(instructions![currentIndex]),
+          : buildCarousel(),
       bottomNavigationBar: BottomAppBar(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             IconButton(
               icon: Icon(Icons.arrow_back),
-              onPressed: currentIndex > 0
-                  ? () => setState(() => currentIndex--)
-                  : null,
+              onPressed: currentIndex > 0 ? goToPreviousStep : null,
             ),
             Text('${currentIndex + 1}/${instructions!.length}'),
             IconButton(
@@ -80,26 +90,48 @@ class _RecipeInstructionPageState extends State<RecipeInstructionPage> {
     );
   }
 
-  Widget buildStepPage(dynamic instruction) {
-    return Card(
-      margin: EdgeInsets.all(8),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Step ${instruction['steps'][0]['number']}',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-            Text(
-              instruction['steps'][0]['step'],
-              style: TextStyle(fontSize: 14),
-            ),
-          ],
-        ),
-      ),
+  Widget buildCarousel() {
+    return PageView.builder(
+      itemCount: instructions!.length,
+      controller: PageController(initialPage: currentIndex),
+      onPageChanged: (index) {
+        setState(() {
+          currentIndex = index;
+        });
+      },
+      itemBuilder: (context, index) {
+        return buildStepPage(instructions![index]);
+      },
     );
+  }
+
+  Widget buildStepPage(dynamic instruction) {
+    if (instruction['steps'] != null && instruction['steps'].isNotEmpty) {
+      final step = instruction['steps'][0];
+      if (step != null) {
+        return Card(
+          margin: EdgeInsets.all(8),
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Step ${step['number']}',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  step['step'],
+                  style: TextStyle(fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    }
+    // Return an empty container if there are no steps or if the step is null
+    return Container();
   }
 }
