@@ -32,6 +32,8 @@ class _HomePageContentState extends State<HomePageContent> {
               'id': recipe['id'],
               'name': recipe['title'],
               'image': recipe['image'],
+              'readyInMinutes':
+                  recipe['readyInMinutes'], // Include time to prepare
             };
           }),
         );
@@ -57,44 +59,74 @@ class _HomePageContentState extends State<HomePageContent> {
       itemCount: recipes.length,
       itemBuilder: (context, index) {
         return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Card(
-            elevation: 4,
-            clipBehavior: Clip.antiAlias,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: NetworkImage(recipes[index]['image']),
-                      fit: BoxFit.cover,
-                    ),
+            padding: const EdgeInsets.all(8.0),
+            child: Card(
+              elevation: 4,
+              clipBehavior: Clip.antiAlias,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: NetworkImage(recipes[index]['image']),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            navigateToRecipeDetails(recipes[index]['id']);
+                          },
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.favorite_border),
+                        onPressed: () {
+                          // Handle favorite button press
+                        },
+                      ),
+                    ],
                   ),
-                  child: InkWell(
-                    onTap: () {
-                      navigateToRecipeDetails(recipes[index]['id']);
-                    },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Icon(Icons.access_time),
+                            SizedBox(width: 4),
+                            Text(
+                              '${recipes[index]['readyInMinutes']} min',
+                              style: TextStyle(
+                                fontSize: 14.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          recipes[index]['name'],
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    recipes[index]['name'],
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+                ],
+              ),
+            ));
       },
     );
   }
