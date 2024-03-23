@@ -24,7 +24,7 @@ class SignupPage extends StatelessWidget {
       // You can navigate to another page upon successful sign-up
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage(recipeData: [],)),
+        MaterialPageRoute(builder: (context) => HomePage()),
       );
     } catch (e) {
       // Handle sign-up errors

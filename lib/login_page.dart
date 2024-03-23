@@ -25,7 +25,7 @@ class LoginPage extends StatelessWidget {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => HomePage(recipeData: recipeData)),
+            builder: (context) => HomePage()),
       );
     } catch (e) {
       // Handle sign-in errors
