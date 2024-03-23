@@ -16,14 +16,17 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
   List<Map<String, dynamic>>? ingredientsData;
   final TextEditingController _ingredientController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
+
   final TextEditingController _newQuantityController = TextEditingController();
   final TextEditingController _unitController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  String _selectedUnit = 'kg';
+  bool? _notifyExpiry;
+  bool? _addToCart;
 
-  final List<String> _units = ['kg', 'g', 'L', 'mL', 'nos'];
+  String _selectedUnit = '';
+  final List<String> _units = ['', 'kg', 'g', 'l', 'ml', 'piece'];
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +55,8 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
               'Inventory',
               style: TextStyle(
                 fontSize: 32,
-                color: Colors.white, // Text color
-                fontWeight: FontWeight.bold, // Bold font
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -85,7 +88,7 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
             ),
           ),
           Positioned(
-            top: 250, // Start from the bottom of the background image
+            top: 250,
             left: 0,
             right: 0,
             bottom: 0,
@@ -214,7 +217,7 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
                     Text(
                         'Added on: ${_formatTimestamp(ingredientData?['timestamp'])}'),
                     Text(
-                        'Days to expire: ${_calculateDaysToExpire(ingredientData?['timestamp'])}'),
+                        'Days to expire: ${_calculateDaysToExpire(ingredientData?['timestamp'], ingredientData?['expiry-days'])}'),
                   ],
                 ),
                 trailing: IconButton(
@@ -380,20 +383,29 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
     return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
   }
 
-  int _calculateDaysToExpire(Timestamp? timestamp) {
+  int _calculateDaysToExpire(Timestamp? timestamp, int? expday) {
     if (timestamp == null) {
       return 0;
     }
 
+    int exday;
+    if (expday != null) {
+      if (expday > 30) {
+        exday = 30;
+      } else {
+        exday = expday;
+      }
+    } else {
+      exday = 7;
+    }
+
     DateTime addedDate = timestamp.toDate();
 
-    // Calculate the due date (7 days after the added date)
-    DateTime dueDate = addedDate.add(Duration(days: 7));
+    DateTime dueDate = addedDate.add(Duration(days: exday));
 
     DateTime currentDate = DateTime.now();
     Duration difference = dueDate.difference(currentDate);
 
-    // Return the number of days until the due date
     return difference.inDays;
   }
 
@@ -448,7 +460,6 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
       );
     } catch (e) {
       print('Error fetching ingredients: $e');
-      // Handle error fetching ingredients
     }
   }
 
@@ -474,99 +485,175 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
   }
 
   void _showAddDialog(BuildContext context) {
+    Map<String, dynamic>? _selectedIngredient; // Declare _selectedIngredient
+    bool _showAdditionalFields =
+        false; // Variable to control the visibility of additional fields
+    bool? _notifyExpiry; // Define _notifyExpiry
+    bool? _addToCart; // Define _addToCart
+
     showDialog(
       context: context,
       builder: (context) {
-        return FutureBuilder(
-          future: _fetchIngredients(context),
-          builder:
-              (context, AsyncSnapshot<List<Map<String, dynamic>>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error fetching ingredients'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No ingredients available'));
-            } else {
-              return AlertDialog(
-                title: Text('Add Ingredient'),
-                content: Column(
+        return StatefulBuilder(
+          builder: (BuildContext context, setState) {
+            return AlertDialog(
+              title: Text(
+                'Add Ingredient',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              content: SingleChildScrollView(
+                child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Builder(
-                      builder: (BuildContext context) {
-                        return Autocomplete<Map<String, dynamic>>(
-                          optionsBuilder: (TextEditingValue textEditingValue) {
-                            if (textEditingValue.text.isEmpty) {
-                              return const Iterable<
-                                  Map<String, dynamic>>.empty();
-                            }
-                            return snapshot.data!
-                                .where((ingredient) => ingredient['name']
-                                    .toLowerCase()
-                                    .contains(
-                                        textEditingValue.text.toLowerCase()))
-                                .toList();
-                          },
-                          onSelected:
-                              (Map<String, dynamic> selectedIngredient) {
-                            _ingredientController.text =
-                                selectedIngredient['name'];
-                          },
-                          optionsMaxHeight: 200,
-                          displayStringForOption: (option) => option['name'],
-                        );
+                    Autocomplete<Map<String, dynamic>>(
+                      optionsBuilder: (TextEditingValue textEditingValue) {
+                        if (textEditingValue.text.isEmpty) {
+                          return const Iterable<Map<String, dynamic>>.empty();
+                        }
+                        return _fetchIngredients(context)
+                            .then((List<Map<String, dynamic>> ingredients) {
+                          return ingredients
+                              .where((ingredient) => ingredient['name']
+                                  .toLowerCase()
+                                  .contains(
+                                      textEditingValue.text.toLowerCase()))
+                              .toList();
+                        });
                       },
+                      onSelected: (Map<String, dynamic> selectedIngredient) {
+                        _ingredientController.text = selectedIngredient['name'];
+                        setState(() {
+                          _selectedIngredient = selectedIngredient;
+                          _showAdditionalFields = true;
+                        });
+                      },
+                      optionsMaxHeight: 200,
+                      displayStringForOption: (option) => option['name'],
                     ),
-                    SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _quantityController,
-                            decoration: InputDecoration(
-                              labelText: 'Quantity',
-                              hintText: 'Enter quantity',
-                              border: OutlineInputBorder(),
+                    SizedBox(height: 20),
+                    if (_showAdditionalFields &&
+                        _selectedIngredient != null) ...[
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.grey[200],
+                              ),
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: TextField(
+                                keyboardType: TextInputType.number,
+                                controller: _quantityController,
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Quantity',
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: TextField(
-                            controller: _unitController,
-                            decoration: InputDecoration(
-                              labelText: 'Unit',
-                              hintText: 'Enter unit',
-                              border: OutlineInputBorder(),
-                            ),
+                          SizedBox(width: 16),
+                          DropdownButton<String>(
+                            value: _selectedUnit,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _selectedUnit = newValue!;
+                              });
+                            },
+                            items: [
+                              DropdownMenuItem<String>(
+                                value: '',
+                                child: Text(
+                                  'Select Unit',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                              ),
+                              ...(_selectedIngredient?['all_units'] as List)
+                                  .map((unit) {
+                                return DropdownMenuItem<String>(
+                                  value: unit.toString(),
+                                  child: Text(unit.toString()),
+                                );
+                              }),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: _notifyExpiry ?? false,
+                            onChanged: (value) {
+                              setState(() {
+                                _notifyExpiry = value!;
+                              });
+                            },
+                          ),
+                          Text('Notify when expiring'),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: _addToCart ?? false,
+                            onChanged: (value) {
+                              setState(() {
+                                _addToCart = value!;
+                              });
+                            },
+                          ),
+                          Text('Add to cart when quantity is low'),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('Cancel'),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    _clearDialogValues();
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.red),
                   ),
-                  ElevatedButton(
-                    onPressed: () async {
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (_selectedIngredient != null) {
+                      Navigator.pop(context);
                       await _addIngredient(context);
-                      Navigator.pop(context);
-                    },
-                    child: Text('Add'),
+                      _clearDialogValues();
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Please select an ingredient.'),
+                        ),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green,
                   ),
-                ],
-              );
-            }
+                  child: Text('Add', style: TextStyle(color: Colors.white)),
+                ),
+              ],
+            );
           },
         );
       },
     );
+  }
+
+  void _clearDialogValues() {
+    _ingredientController.clear();
+    _quantityController.clear();
+    _selectedUnit = '';
+    _notifyExpiry = null;
+    _addToCart = null;
   }
 
   Future<List<Map<String, dynamic>>> _fetchIngredients(
@@ -604,8 +691,8 @@ class _RefrigeratorPageContentState extends State<RefrigeratorPageContent> {
             'unit': _selectedUnit,
             'timestamp': FieldValue.serverTimestamp(),
             'image': selectedIngredient['image'],
-            'expiry-days': selectedIngredient['expiry-days'],
-            'threshold': selectedIngredient['threshold-quantity'],
+            'expiry-days': selectedIngredient['expiry_days'],
+            'threshold': selectedIngredient['threshold_quantity'],
           });
 
           _ingredientController.clear();
