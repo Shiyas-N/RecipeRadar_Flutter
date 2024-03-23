@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'home_page_content.dart';
 import 'search_page_content.dart';
 import 'refrigerator_page_content.dart';
-import 'shopping_cart_page_content.dart';
+// import 'shopping_cart_page_content.dart';
+import 'test.dart';
 import 'profile_page_content.dart';
 import 'recipe.dart';
 
@@ -16,15 +17,13 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
-  final double _selectedIconSize = 35.0;
-  final double _unselectedIconSize = 30.0;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildPage(_currentIndex),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Color(0xFF4CAF50),
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),
+        type: BottomNavigationBarType.fixed, // Set type to fixed
         currentIndex: _currentIndex,
         selectedItemColor: Color(0xFF4CAF50),
         unselectedItemColor: Colors.grey,
@@ -33,31 +32,23 @@ class _HomePageState extends State<HomePage> {
             _currentIndex = index;
           });
         },
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        iconSize: _unselectedIconSize,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
         items: [
-          _buildNavBarItem(Icons.home, 0),
-          _buildNavBarItem(Icons.search, 1),
-          _buildNavBarItem(Icons.kitchen, 2),
-          _buildNavBarItem(Icons.shopping_cart, 3),
-          _buildNavBarItem(Icons.person, 4),
+          _buildNavBarItem(Icons.home, 'Home'),
+          _buildNavBarItem(Icons.search, 'Search'),
+          _buildNavBarItem(Icons.kitchen, 'Inventory'),
+          _buildNavBarItem(Icons.shopping_cart, 'Shopping'),
+          _buildNavBarItem(Icons.person, 'Profile'),
         ],
       ),
     );
   }
 
-  BottomNavigationBarItem _buildNavBarItem(IconData icon, int index) {
+  BottomNavigationBarItem _buildNavBarItem(IconData icon, String label) {
     return BottomNavigationBarItem(
-      icon: index == _currentIndex ? _selectedIcon(icon) : Icon(icon),
-      label: '',
-    );
-  }
-
-  Widget _selectedIcon(IconData icon) {
-    return Transform.scale(
-      scale: _selectedIconSize / _unselectedIconSize,
-      child: Icon(icon, size: _selectedIconSize),
+      icon: Icon(icon),
+      label: label,
     );
   }
 
