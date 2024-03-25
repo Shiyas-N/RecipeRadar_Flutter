@@ -48,22 +48,37 @@ class RecipeInstructionPage extends StatelessWidget {
                         ),
                         if (ingredients != null && ingredients.isNotEmpty)
                           ...ingredients.map((ingredient) {
-                            return Card(
-                              child: ListTile(
-                                leading:
-                                    _buildIngredientImage(ingredient['image']),
-                                title: Text(ingredient['name']),
+                            return Container(
+                              height: 100, 
+                              alignment: Alignment.centerLeft,
+                              child: Card(
+                                child: Padding(
+                                  padding: EdgeInsets.all(
+                                      8.0), 
+                                  child: ListTile(
+                                    leading: _buildIngredientImage(
+                                        ingredient['image']),
+                                    title: Text(ingredient['name']),
+                                  ),
+                                ),
                               ),
                             );
                           }).toList(),
-                        // Display equipment with images and names
                         if (equipment != null && equipment.isNotEmpty)
                           ...equipment.map((equipmentItem) {
-                            return Card(
-                              child: ListTile(
-                                leading: _buildEquipmentImage(
-                                    equipmentItem['image']),
-                                title: Text(equipmentItem['name']),
+                            return Container(
+                              height: 100,
+                              alignment: Alignment.centerLeft,
+                              child: Card(
+                                child: Padding(
+                                  padding: EdgeInsets.all(
+                                      8.0),
+                                  child: ListTile(
+                                    leading: _buildIngredientImage(
+                                        equipmentItem['image']),
+                                    title: Text(equipmentItem['name']),
+                                  ),
+                                ),
                               ),
                             );
                           }).toList(),
@@ -108,11 +123,6 @@ class RecipeInstructionPage extends StatelessWidget {
                         'Remember to update ingredient quantities in your Inventory!'),
                   ),
                 );
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
-                  (route) => false,
-                );
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -134,7 +144,6 @@ class RecipeInstructionPage extends StatelessWidget {
 
   Widget _buildIngredientImage(String? imageName) {
     if (imageName == null || imageName.isEmpty) {
-      // Placeholder image
       return SizedBox(
         width: 100,
         height: 100,
@@ -142,9 +151,8 @@ class RecipeInstructionPage extends StatelessWidget {
       );
     }
 
-    // Use Image.network for loading the ingredient image
     return Image.network(
-      'https://spoonacular.com/cdn/ingredients_100x100/$imageName',
+      imageName,
       width: 100,
       height: 100,
       fit: BoxFit.cover,
@@ -161,11 +169,10 @@ class RecipeInstructionPage extends StatelessWidget {
       );
     }
 
-    // Use Image.network for loading the equipment image
     return Image.network(
-      'https://spoonacular.com/cdn/equipment_100x100/$imageName',
-      width: 50,
-      height: 50,
+      imageName,
+      width: 100,
+      height: 100,
       fit: BoxFit.cover,
     );
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'login2.dart';
+import 'favorites.dart';
 
 class ProfilePageContent extends StatelessWidget {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -15,29 +17,30 @@ class ProfilePageContent extends StatelessWidget {
           .collection('profile')
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
             child: CircularProgressIndicator(),
           );
         }
 
-        // Accessing the documents inside the snapshot
-        var documents = snapshot.data!.docs;
-        if (documents.isEmpty) {
+        if (snapshot.data!.docs.isEmpty) {
           return Center(child: Text('No user data found'));
         }
 
-        // Assuming only one document is expected
-        var userData = documents.first.data() as Map<String, dynamic>;
-        var name = userData['name'];
-        var email = userData['email'];
+        var profileData =
+            snapshot.data!.docs.first.data() as Map<String, dynamic>;
+        var name = profileData?['username'] ?? 'Username not found';
+        var email = profileData?['email'] ?? 'Email not found';
+
+        // Get the first letter of the username
+        String firstLetter = name.substring(0, 1).toUpperCase();
 
         return Container(
           alignment: Alignment.center,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: 100), // Top margin
+              SizedBox(height: 100),
               Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: Text(
@@ -47,9 +50,18 @@ class ProfilePageContent extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 20),
-              CircleAvatar(
-                radius: 50,
-                child: Icon(Icons.person, size: 50),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    child: Text(
+                      firstLetter,
+                      style: TextStyle(fontSize: 30),
+                    ),
+                  ),
+                  // Add any overlay or decoration you want here
+                ],
               ),
               SizedBox(height: 20),
               Text(
@@ -80,7 +92,10 @@ class ProfilePageContent extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    // Action for favorites button
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FavoritePage()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Colors.white,
@@ -99,12 +114,19 @@ class ProfilePageContent extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Action for logout
+                  onPressed: () async {
+                    // Logout action
+                    await _auth.signOut();
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                      (route) => false,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Color.fromARGB(255, 255, 77, 64),
-                    textStyle: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+                    textStyle:
+                        TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                   ),
                   child: Text('Logout'),
                 ),

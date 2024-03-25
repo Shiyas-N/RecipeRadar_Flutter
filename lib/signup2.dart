@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import "food_preference_page.dart";
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -20,34 +22,83 @@ class _SignupPageState extends State<SignupPage> {
   Future<void> _createAccount(
       BuildContext context, String name, String email, String password) async {
     try {
-      // Create user account
       UserCredential userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-
-      // Get the user ID
       String userId = userCredential.user!.uid;
-
-      // Create a document for the user in Firestore
-      await FirebaseFirestore.instance.collection('users').doc(userId).set({
-        'email': email,
-        'usename': name,
-      });
-
-      // Navigate to the home page
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('profile')
+          .add(
+        {
+          'email': email,
+          'username': name,
+        },
+      );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(builder: (context) => FoodPreferencesPage()),
       );
     } catch (e) {
-      // Handle errors
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to create account:'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  }
+
+  Future<void> signInWithGoogle(BuildContext context) async {
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser!.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      if (FirebaseAuth.instance.currentUser != null) {
+        String userId = FirebaseAuth.instance.currentUser!.uid;
+
+        QuerySnapshot profileSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .collection('profile')
+            .get();
+
+        if (profileSnapshot.docs.isEmpty) {
+          String email = FirebaseAuth.instance.currentUser!.email ?? '';
+          String username = email.split('@').first;
+
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(userId)
+              .collection('profile')
+              .add({
+            'email': email,
+            'username': username,
+          });
+        }
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => FoodPreferencesPage()),
+        );
+      } else {
+        print('User not signed in after Google Sign-In');
+      }
+    } catch (e) {
       print(e.toString());
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to create account: ${e.toString()}'),
-          duration: Duration(seconds: 3),
+          content: Text('Google sign-in failed: ${e.toString()}'),
+          duration: const Duration(seconds: 3),
         ),
       );
     }
@@ -188,13 +239,14 @@ class _SignupPageState extends State<SignupPage> {
                         color: Colors.white.withOpacity(0.5),
                         spreadRadius: 1,
                         blurRadius: 1,
-                        offset:
-                            const Offset(0, 1), // changes position of shadow
+                        offset: const Offset(0, 1),
                       ),
                     ],
                   ),
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      signInWithGoogle(context);
+                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -225,7 +277,9 @@ class _SignupPageState extends State<SignupPage> {
                   children: <Widget>[
                     const Text("Already have an account?"),
                     TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
                         child: const Text(
                           "Login",
                           style: TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
